@@ -65,6 +65,7 @@
       }
     ]
   },
+  "teammateMode": "tmux",
   "permissions": {
     "allow": [
       "Bash(git status:*)",
