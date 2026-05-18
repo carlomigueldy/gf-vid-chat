@@ -64,10 +64,13 @@ export function QrScanner({ onResult, onError }: QrScannerProps) {
   }
 
   useEffect(() => {
-    startScanner()
+    queueMicrotask(() => {
+      void startScanner()
+    })
     return () => {
-      stopScanner()
+      void stopScanner()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

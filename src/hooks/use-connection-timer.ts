@@ -28,18 +28,17 @@ export function useConnectionTimer({
 
   useEffect(() => {
     if (!isActive || retryStartTime === null) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTimeRemainingMs(retryTimeoutMs)
-      return
+      return undefined
     }
 
     function tick() {
       const elapsed = Date.now() - (retryStartTime as number)
-      const remaining = Math.max(0, retryTimeoutMs - elapsed)
-      setTimeRemainingMs(remaining)
+      setTimeRemainingMs(Math.max(0, retryTimeoutMs - elapsed))
     }
 
     tick()
-
     const id = setInterval(tick, 1000)
     return () => clearInterval(id)
   }, [isActive, retryStartTime, retryTimeoutMs])
