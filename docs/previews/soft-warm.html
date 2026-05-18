@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gf-vid-chat — Design B: Soft + Warm</title>
+  <style>
+    /* ─────────────────────────────────────────
+       CSS Custom Properties — WARM variant
+    ───────────────────────────────────────── */
+    :root {
+      --background: oklch(0.995 0.002 60);
+      --foreground: oklch(0.18 0.01 30);
+      --card: oklch(1 0.001 60);
+      --card-foreground: oklch(0.18 0.01 30);
+      --primary: oklch(0.65 0.18 12);
+      --primary-foreground: oklch(0.99 0 0);
+      --secondary: oklch(0.96 0.01 30);
+      --secondary-foreground: oklch(0.25 0.01 30);
+      --muted: oklch(0.96 0.008 40);
+      --muted-foreground: oklch(0.55 0.01 30);
+      --accent: oklch(0.93 0.03 12);
+      --accent-foreground: oklch(0.35 0.08 12);
+      --destructive: oklch(0.55 0.22 27);
+      --border: oklch(0.92 0.01 30);
+      --input: oklch(0.92 0.01 30);
+      --ring: oklch(0.65 0.18 12);
+      --radius: 0.75rem;
+
+      /* Derived helpers */
+      --shadow-warm-sm: 0 1px 3px rgba(120, 40, 20, 0.06), 0 1px 2px rgba(120, 40, 20, 0.04);
+      --shadow-warm-md: 0 4px 12px rgba(120, 40, 20, 0.08), 0 2px 6px rgba(120, 40, 20, 0.05);
+      --shadow-warm-lg: 0 8px 28px rgba(120, 40, 20, 0.1), 0 4px 10px rgba(120, 40, 20, 0.06);
+      --shadow-warm-glow: 0 0 32px rgba(200, 80, 50, 0.18), 0 0 8px rgba(200, 80, 50, 0.1);
+    }
+
+    html.dark {
+      --background: oklch(0.16 0.01 30);
+      --foreground: oklch(0.96 0.005 30);
+      --card: oklch(0.21 0.012 30);
+      --card-foreground: oklch(0.96 0.005 30);
+      --primary: oklch(0.72 0.16 12);
+      --primary-foreground: oklch(0.15 0.01 30);
+      --secondary: oklch(0.27 0.012 30);
+      --secondary-foreground: oklch(0.96 0.005 30);
+      --muted: oklch(0.27 0.01 30);
+      --muted-foreground: oklch(0.65 0.01 30);
+      --accent: oklch(0.32 0.04 12);
+      --accent-foreground: oklch(0.9 0.06 12);
+      --destructive: oklch(0.45 0.16 25);
+      --border: oklch(0.28 0.012 30);
+      --input: oklch(0.28 0.012 30);
+      --ring: oklch(0.72 0.16 12);
+
+      --shadow-warm-sm: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+      --shadow-warm-md: 0 4px 12px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.25);
+      --shadow-warm-lg: 0 8px 28px rgba(0, 0, 0, 0.45), 0 4px 10px rgba(0, 0, 0, 0.3);
+      --shadow-warm-glow: 0 0 40px rgba(210, 100, 70, 0.22), 0 0 12px rgba(210, 100, 70, 0.12);
+    }
+
+    /* ─────────────────────────────────────────
+       Reset + Base
+    ───────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--background);
+      color: var(--foreground);
+      background-image:
+        radial-gradient(ellipse at 20% 0%, oklch(0.97 0.015 20 / 0.5) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 100%, oklch(0.97 0.012 40 / 0.4) 0%, transparent 55%);
+      min-height: 100vh;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    html.dark body {
+      background-image:
+        radial-gradient(ellipse at 20% 0%, oklch(0.22 0.02 20 / 0.4) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 100%, oklch(0.20 0.015 35 / 0.3) 0%, transparent 55%);
+    }
+
+    /* ─────────────────────────────────────────
+       Animations
+    ───────────────────────────────────────── */
+    @keyframes pulse-ring {
+      0%   { opacity: 1; transform: scale(1); }
+      50%  { opacity: 0.6; transform: scale(1.06); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes badge-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 oklch(0.85 0.14 70 / 0.5); }
+      50%       { box-shadow: 0 0 0 6px oklch(0.85 0.14 70 / 0); }
+    }
+
+    /* ─────────────────────────────────────────
+       Sticky Header
+    ───────────────────────────────────────── */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0 1.5rem;
+      height: 60px;
+      background-color: var(--card);
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow-warm-sm);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .site-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--foreground);
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .site-logo .heart {
+      color: var(--primary);
+      font-size: 0.9rem;
+    }
+
+    /* Screen Tabs — center */
+    .screen-tabs {
+      display: flex;
+      align-items: center;
+      gap: 0.15rem;
+      background-color: var(--muted);
+      padding: 0.25rem;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+
+    .screen-tab {
+      padding: 0.35rem 0.85rem;
+      font-size: 0.78rem;
+      font-weight: 500;
+      border-radius: calc(var(--radius) - 2px);
+      border: none;
+      cursor: pointer;
+      background: transparent;
+      color: var(--muted-foreground);
+      transition: background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+      white-space: nowrap;
+    }
+
+    .screen-tab.active {
+      background-color: var(--card);
+      color: var(--foreground);
+      box-shadow: var(--shadow-warm-sm);
+    }
+
+    /* Dark mode toggle */
+    .dark-toggle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background-color: var(--secondary);
+      color: var(--foreground);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .dark-toggle:hover { background-color: var(--accent); }
+
+    /* ─────────────────────────────────────────
+       Screen Wrapper
+    ───────────────────────────────────────── */
+    .screen { display: none; animation: fade-in 0.22s ease; }
+    .screen.active { display: block; }
+
+    /* ─────────────────────────────────────────
+       HOME SCREEN
+    ───────────────────────────────────────── */
+    .home-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 3rem 1.25rem 4rem;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 2.75rem;
+    }
+
+    .hero-title {
+      font-size: clamp(2rem, 5vw, 2.75rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--foreground);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .hero-title .brand-heart {
+      color: var(--primary);
+      font-size: 0.85em;
+      animation: pulse-ring 3s ease-in-out infinite;
+      display: inline-block;
+    }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      color: var(--muted-foreground);
+      max-width: 440px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Cards row */
+    .cards-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    @media (max-width: 639px) {
+      .cards-row { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) + 0.25rem);
+      padding: 1.75rem;
+      box-shadow: var(--shadow-warm-md);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--foreground);
+      margin-bottom: 0.3rem;
+      letter-spacing: -0.01em;
+    }
+
+    .card-desc {
+      font-size: 0.82rem;
+      color: var(--muted-foreground);
+      margin-bottom: 1.4rem;
+      line-height: 1.5;
+    }
+
+    /* Slider */
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.55rem;
+    }
+
+    .slider-label span:first-child {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--foreground);
+    }
+
+    .slider-value {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--primary);
+      background-color: var(--accent);
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+    }
+
+    .slider-wrap {
+      position: relative;
+      margin-bottom: 0.4rem;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--border);
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 0 3px var(--accent), var(--shadow-warm-sm);
+      cursor: pointer;
+      transition: box-shadow 0.15s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      box-shadow: 0 0 0 5px var(--accent), var(--shadow-warm-sm);
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      background: linear-gradient(to right, var(--primary) var(--pct, 50%), var(--border) var(--pct, 50%));
+      height: 6px;
+      border-radius: 999px;
+    }
+
+    .slider-range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--muted-foreground);
+      margin-bottom: 1.4rem;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.6rem 1.25rem;
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+      line-height: 1;
+    }
+
+    .btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); opacity: 1; }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+      box-shadow: var(--shadow-warm-md);
+      width: 100%;
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary);
+      color: var(--secondary-foreground);
+      border: 1px solid var(--border);
+    }
+
+    .btn-rose-outline {
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+
+    /* Join card tabs */
+    .join-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.2rem;
+      gap: 0;
+    }
+
+    .join-tab {
+      padding: 0.5rem 1rem;
+      font-size: 0.82rem;
+      font-weight: 500;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: var(--muted-foreground);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .join-tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      font-weight: 600;
+    }
+
+    .join-panel { display: none; }
+    .join-panel.active { display: block; }
+
+    /* Scan placeholder */
+    .scan-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 130px;
+      background-color: var(--muted);
+      border-radius: var(--radius);
+      gap: 0.5rem;
+      color: var(--muted-foreground);
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    /* Upload dropzone */
+    .dropzone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 120px;
+      border: 2px dashed oklch(0.80 0.06 12);
+      border-radius: var(--radius);
+      gap: 0.4rem;
+      color: var(--muted-foreground);
+      font-size: 0.8rem;
+      font-weight: 500;
+      background-color: var(--accent);
+      cursor: pointer;
+      transition: border-color 0.15s, background-color 0.15s;
+      margin-bottom: 0;
+    }
+
+    html.dark .dropzone {
+      border-color: oklch(0.42 0.07 12);
+      background-color: var(--accent);
+    }
+
+    .dropzone:hover {
+      border-color: var(--primary);
+      background-color: oklch(0.91 0.035 12);
+    }
+
+    html.dark .dropzone:hover {
+      background-color: oklch(0.36 0.05 12);
+    }
+
+    /* Paste input row */
+    .paste-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .paste-input {
+      flex: 1;
+      height: 38px;
+      padding: 0 0.75rem;
+      border: 1px solid var(--input);
+      border-radius: var(--radius);
+      background-color: var(--background);
+      color: var(--foreground);
+      font-size: 0.82rem;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .paste-input::placeholder { color: var(--muted-foreground); }
+
+    .paste-input:focus {
+      border-color: var(--ring);
+      box-shadow: 0 0 0 3px oklch(0.65 0.18 12 / 0.15);
+    }
+
+    .btn-join {
+      height: 38px;
+      padding: 0 1rem;
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+      border: none;
+      border-radius: var(--radius);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.15s;
+    }
+
+    .btn-join:hover { opacity: 0.85; }
+
+    /* ─────────────────────────────────────────
+       ROOM SCREENS (shared base)
+    ───────────────────────────────────────── */
+    .room-screen {
+      position: relative;
+      height: calc(100vh - 61px);
+      overflow: hidden;
+      background-color: oklch(0.13 0.012 25);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Top badge */
+    .room-badge {
+      position: absolute;
+      top: 1.25rem;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 0.3rem 1rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      z-index: 10;
+    }
+
+    .badge-waiting {
+      background-color: oklch(0.88 0.12 75 / 0.18);
+      color: oklch(0.85 0.14 70);
+      border: 1px solid oklch(0.85 0.14 70 / 0.3);
+      animation: badge-pulse 2s ease-in-out infinite;
+    }
+
+    .badge-connected {
+      background-color: oklch(0.40 0.12 145 / 0.25);
+      color: oklch(0.75 0.14 145);
+      border: 1px solid oklch(0.75 0.14 145 / 0.4);
+    }
+
+    /* Floating control bar */
+    .control-bar {
+      position: absolute;
+      bottom: 1.75rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.6rem 1rem;
+      border-radius: 999px;
+      background-color: oklch(0.18 0.015 30 / 0.82);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid oklch(0.32 0.015 30 / 0.6);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255,255,255,0.04) inset;
+      z-index: 20;
+    }
+
+    .ctrl-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.15s, transform 0.1s;
+      background-color: oklch(0.28 0.015 30 / 0.8);
+      color: oklch(0.9 0 0);
+    }
+
+    .ctrl-btn:hover {
+      background-color: oklch(0.35 0.02 30 / 0.9);
+      transform: scale(1.06);
+    }
+
+    .ctrl-btn.danger {
+      background-color: var(--destructive);
+      color: white;
+      width: 50px;
+      height: 50px;
+    }
+
+    .ctrl-btn.danger:hover {
+      background-color: oklch(0.5 0.22 25);
+    }
+
+    /* ─────────────────────────────────────────
+       WAITING SCREEN
+    ───────────────────────────────────────── */
+    .waiting-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      text-align: center;
+    }
+
+    /* QR Code simulation */
+    .qr-wrap {
+      padding: 1.25rem;
+      background: white;
+      border-radius: calc(var(--radius) + 0.25rem);
+      box-shadow: var(--shadow-warm-glow);
+      animation: pulse-ring 4s ease-in-out infinite;
+    }
+
+    .qr-grid {
+      display: grid;
+      grid-template-columns: repeat(19, 1fr);
+      gap: 1.5px;
+      width: 171px;
+      height: 171px;
+    }
+
+    .qr-cell {
+      border-radius: 1px;
+      background-color: #1a0e0a;
+    }
+
+    .qr-cell.white { background-color: white; }
+
+    .waiting-label {
+      font-size: 1rem;
+      font-weight: 600;
+      color: oklch(0.88 0.03 30);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .waiting-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: oklch(0.85 0.14 70);
+      animation: pulse-dot 1.5s ease-in-out infinite;
+    }
+
+    .room-id {
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 0.78rem;
+      color: oklch(0.55 0.02 30);
+      background-color: oklch(0.20 0.012 25);
+      padding: 0.4rem 0.85rem;
+      border-radius: var(--radius);
+      border: 1px solid oklch(0.28 0.012 28);
+      letter-spacing: 0.05em;
+    }
+
+    /* ─────────────────────────────────────────
+       CONNECTED SCREEN
+    ───────────────────────────────────────── */
+    .remote-video {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        oklch(0.20 0.05 320) 0%,
+        oklch(0.16 0.04 10) 40%,
+        oklch(0.14 0.03 25) 70%,
+        oklch(0.18 0.05 340) 100%
+      );
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: oklch(0.4 0.03 30);
+      font-size: 0.8rem;
+      font-weight: 500;
+      gap: 0.5rem;
+    }
+
+    .remote-video-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0.5;
+    }
+
+    .pip-video {
+      position: absolute;
+      bottom: 6rem;
+      right: 1.5rem;
+      width: 120px;
+      height: 90px;
+      border-radius: calc(var(--radius));
+      background: linear-gradient(
+        135deg,
+        oklch(0.32 0.05 10) 0%,
+        oklch(0.28 0.04 25) 100%
+      );
+      border: 2px solid oklch(0.35 0.04 12 / 0.7);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: oklch(0.55 0.03 30);
+      font-size: 0.65rem;
+    }
+
+    /* ─────────────────────────────────────────
+       SETTINGS SCREEN
+    ───────────────────────────────────────── */
+    .settings-wrap {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 2.5rem 1.25rem 4rem;
+    }
+
+    .settings-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--foreground);
+      margin-bottom: 2rem;
+    }
+
+    .settings-section {
+      margin-bottom: 1.75rem;
+    }
+
+    .settings-section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted-foreground);
+      margin-bottom: 0.75rem;
+    }
+
+    .settings-card {
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) + 0.25rem);
+      padding: 1.25rem 1.5rem;
+      box-shadow: var(--shadow-warm-sm);
+    }
+
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .settings-row-label {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--foreground);
+    }
+
+    /* Theme button group */
+    .theme-group {
+      display: flex;
+      background-color: var(--muted);
+      border-radius: var(--radius);
+      padding: 0.25rem;
+      gap: 0.15rem;
+    }
+
+    .theme-btn {
+      padding: 0.35rem 0.85rem;
+      font-size: 0.78rem;
+      font-weight: 500;
+      border-radius: calc(var(--radius) - 2px);
+      border: none;
+      cursor: pointer;
+      background: transparent;
+      color: var(--muted-foreground);
+      transition: all 0.15s ease;
+    }
+
+    .theme-btn.active {
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+      box-shadow: var(--shadow-warm-sm);
+    }
+
+    /* About section */
+    .about-app {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .about-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--foreground);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .about-version {
+      font-size: 0.78rem;
+      color: var(--muted-foreground);
+    }
+
+    .about-desc {
+      font-size: 0.82rem;
+      color: var(--muted-foreground);
+      line-height: 1.5;
+    }
+
+    /* ─────────────────────────────────────────
+       Mobile nav for room screens
+    ───────────────────────────────────────── */
+    @media (max-width: 480px) {
+      .screen-tabs { gap: 0.05rem; }
+      .screen-tab { padding: 0.32rem 0.6rem; font-size: 0.72rem; }
+      .site-logo span.logo-text { display: none; }
+      .ctrl-btn { width: 40px; height: 40px; }
+      .ctrl-btn.danger { width: 46px; height: 46px; }
+    }
+
+    /* divider */
+    .divider {
+      height: 1px;
+      background-color: var(--border);
+      margin: 1rem 0;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ═══════════════════════════════════════════
+     STICKY HEADER
+════════════════════════════════════════════ -->
+<header class="site-header">
+  <!-- Logo -->
+  <div class="site-logo">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="color: var(--primary);">
+      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+    </svg>
+    <span class="logo-text" style="font-size: 1rem;">gf-vid-chat</span>
+  </div>
+
+  <!-- Screen Tabs -->
+  <nav class="screen-tabs" role="tablist" aria-label="Preview screens">
+    <button class="screen-tab active" role="tab" data-screen="home" onclick="switchScreen('home', this)">Home</button>
+    <button class="screen-tab" role="tab" data-screen="waiting" onclick="switchScreen('waiting', this)">Waiting</button>
+    <button class="screen-tab" role="tab" data-screen="connected" onclick="switchScreen('connected', this)">Connected</button>
+    <button class="screen-tab" role="tab" data-screen="settings" onclick="switchScreen('settings', this)">Settings</button>
+  </nav>
+
+  <!-- Dark mode toggle -->
+  <button class="dark-toggle" onclick="toggleDark()" aria-label="Toggle dark mode" title="Toggle dark mode">
+    <!-- Sun icon (shown in dark mode) -->
+    <svg id="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+      <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+    <!-- Moon icon (shown in light mode) -->
+    <svg id="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  </button>
+</header>
+
+
+<!-- ═══════════════════════════════════════════
+     SCREEN 1: HOME
+════════════════════════════════════════════ -->
+<main id="screen-home" class="screen active" role="tabpanel">
+  <div class="home-wrap">
+
+    <!-- Hero -->
+    <section class="hero">
+      <h1 class="hero-title">
+        gf-vid-chat
+        <span class="brand-heart">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+        </span>
+      </h1>
+      <p class="hero-sub">Stay connected while you sleep. No accounts, no servers — just you two.</p>
+    </section>
+
+    <!-- Cards -->
+    <div class="cards-row">
+
+      <!-- Create Room -->
+      <div class="card">
+        <div class="card-title">Create a Room</div>
+        <div class="card-desc">Share the QR code with your partner. The room auto-reconnects when the connection drops.</div>
+
+        <div class="slider-label">
+          <span>Auto-disconnect after</span>
+          <span class="slider-value" id="slider-display">60 min</span>
+        </div>
+        <div class="slider-wrap">
+          <input
+            type="range"
+            id="timeout-slider"
+            min="5"
+            max="120"
+            value="60"
+            step="5"
+            style="--pct: 46.5%;"
+            aria-label="Auto-disconnect timeout"
+            oninput="updateSlider(this)"
+          />
+        </div>
+        <div class="slider-range-labels">
+          <span>5 min</span>
+          <span>2 hours</span>
+        </div>
+
+        <button class="btn btn-primary" onclick="switchScreen('waiting', document.querySelector('[data-screen=waiting]'))">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 12 19.79 19.79 0 0 1 1.91 3.56 2 2 0 0 1 3.89 1.38h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.06-1.06a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+          Create Room
+        </button>
+      </div>
+
+      <!-- Join Room -->
+      <div class="card">
+        <div class="card-title">Join a Room</div>
+        <div class="card-desc">Scan your partner's QR code, upload it, or paste the room link below.</div>
+
+        <div class="join-tabs" role="tablist">
+          <button class="join-tab active" role="tab" onclick="switchJoinTab('scan', this)">Scan QR</button>
+          <button class="join-tab" role="tab" onclick="switchJoinTab('upload', this)">Upload QR</button>
+          <button class="join-tab" role="tab" onclick="switchJoinTab('paste', this)">Paste Link</button>
+        </div>
+
+        <!-- Scan panel -->
+        <div id="join-scan" class="join-panel active">
+          <div class="scan-placeholder">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--muted-foreground);">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+            Point camera at QR code
+          </div>
+        </div>
+
+        <!-- Upload panel -->
+        <div id="join-upload" class="join-panel">
+          <div class="dropzone" role="button" tabindex="0" aria-label="Upload QR code image">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary); opacity: 0.7;">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            <span>Drop QR image here or click to browse</span>
+          </div>
+        </div>
+
+        <!-- Paste panel -->
+        <div id="join-paste" class="join-panel">
+          <div style="margin-bottom: 0.75rem;">
+            <div class="paste-row">
+              <input
+                type="text"
+                class="paste-input"
+                placeholder="Paste room link..."
+                aria-label="Room link"
+              />
+              <button class="btn-join" onclick="switchScreen('connected', document.querySelector('[data-screen=connected]'))">Join</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.cards-row -->
+  </div>
+</main>
+
+
+<!-- ═══════════════════════════════════════════
+     SCREEN 2: ROOM — WAITING
+════════════════════════════════════════════ -->
+<main id="screen-waiting" class="screen" role="tabpanel">
+  <div class="room-screen">
+
+    <!-- Status badge -->
+    <div class="room-badge badge-waiting" aria-live="polite">
+      <span style="display:inline-flex; align-items:center; gap: 0.4rem;">
+        <span class="waiting-dot"></span>
+        Waiting for partner…
+      </span>
+    </div>
+
+    <!-- Content -->
+    <div class="waiting-content">
+      <!-- QR Code simulation -->
+      <div class="qr-wrap" aria-label="Room QR code">
+        <div class="qr-grid" id="qr-grid" aria-hidden="true"></div>
+      </div>
+
+      <div class="waiting-label">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="color: oklch(0.85 0.14 70);">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+        </svg>
+        Share this QR with your partner
+      </div>
+
+      <div class="room-id" aria-label="Room ID">
+        gfvc-k7x2-m9pq-3r8t
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="control-bar" role="toolbar" aria-label="Call controls">
+      <!-- Mic on -->
+      <button class="ctrl-btn" aria-label="Mute microphone" title="Mute">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/>
+          <line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+      </button>
+      <!-- Camera on -->
+      <button class="ctrl-btn" aria-label="Turn off camera" title="Camera off">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="23 7 16 12 23 17 23 7"/>
+          <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+        </svg>
+      </button>
+      <!-- Hang up -->
+      <button class="ctrl-btn danger" aria-label="Cancel room" title="Cancel" onclick="switchScreen('home', document.querySelector('[data-screen=home]'))">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.42 19.42 0 0 1 3.07 11.5 19.79 19.79 0 0 1 0 2.87 2 2 0 0 1 1.95.73H5a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L6.18 8.63"/>
+          <line x1="23" y1="1" x2="1" y2="23"/>
+        </svg>
+      </button>
+    </div>
+
+  </div>
+</main>
+
+
+<!-- ═══════════════════════════════════════════
+     SCREEN 3: ROOM — CONNECTED
+════════════════════════════════════════════ -->
+<main id="screen-connected" class="screen" role="tabpanel">
+  <div class="room-screen">
+
+    <!-- Remote video background -->
+    <div class="remote-video" aria-label="Remote video feed">
+      <div class="remote-video-label">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" opacity="0.4">
+          <polygon points="23 7 16 12 23 17 23 7"/>
+          <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+        </svg>
+        <span style="font-size: 0.75rem; opacity: 0.5;">Remote video</span>
+      </div>
+    </div>
+
+    <!-- PiP local video -->
+    <div class="pip-video" aria-label="Your video preview">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.5">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M4 20c0-4 3.58-7 8-7s8 3 8 7"/>
+      </svg>
+    </div>
+
+    <!-- Connected badge -->
+    <div class="room-badge badge-connected" aria-live="polite">
+      <span style="display:inline-flex; align-items:center; gap: 0.4rem;">
+        <span style="width:7px; height:7px; border-radius:50%; background: oklch(0.75 0.14 145); display:inline-block;"></span>
+        Connected
+      </span>
+    </div>
+
+    <!-- Controls -->
+    <div class="control-bar" role="toolbar" aria-label="Call controls">
+      <!-- Mic off (muted state) -->
+      <button class="ctrl-btn" aria-label="Unmute microphone" title="Unmute" style="background-color: oklch(0.55 0.18 12 / 0.6);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="1" y1="1" x2="23" y2="23"/>
+          <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/>
+          <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/>
+          <line x1="12" y1="19" x2="12" y2="23"/>
+          <line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+      </button>
+      <!-- Camera on -->
+      <button class="ctrl-btn" aria-label="Turn off camera" title="Camera off">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="23 7 16 12 23 17 23 7"/>
+          <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+        </svg>
+      </button>
+      <!-- Fullscreen -->
+      <button class="ctrl-btn" aria-label="Enter fullscreen" title="Fullscreen">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+        </svg>
+      </button>
+      <!-- Hang up -->
+      <button class="ctrl-btn danger" aria-label="End call" title="Hang up" onclick="switchScreen('home', document.querySelector('[data-screen=home]'))">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.42 19.42 0 0 1 3.07 11.5 19.79 19.79 0 0 1 0 2.87 2 2 0 0 1 1.95.73H5a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L6.18 8.63"/>
+          <line x1="23" y1="1" x2="1" y2="23"/>
+        </svg>
+      </button>
+    </div>
+
+  </div>
+</main>
+
+
+<!-- ═══════════════════════════════════════════
+     SCREEN 4: SETTINGS
+════════════════════════════════════════════ -->
+<main id="screen-settings" class="screen" role="tabpanel">
+  <div class="settings-wrap">
+
+    <h1 class="settings-title">Settings</h1>
+
+    <!-- Appearance -->
+    <section class="settings-section">
+      <div class="settings-section-label">Appearance</div>
+      <div class="settings-card">
+        <div class="settings-row">
+          <span class="settings-row-label">Theme</span>
+          <div class="theme-group" role="group" aria-label="Theme selection">
+            <button class="theme-btn active" id="theme-light" onclick="setTheme('light', this)" aria-pressed="true">Light</button>
+            <button class="theme-btn" id="theme-dark" onclick="setTheme('dark', this)" aria-pressed="false">Dark</button>
+            <button class="theme-btn" id="theme-system" onclick="setTheme('system', this)" aria-pressed="false">System</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section class="settings-section">
+      <div class="settings-section-label">About</div>
+      <div class="settings-card">
+        <div class="about-app">
+          <div class="about-name">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" style="color: var(--primary);">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            gf-vid-chat
+          </div>
+          <div class="about-version">Version 1.0.0</div>
+          <div class="divider"></div>
+          <div class="about-desc">
+            A P2P video chat app designed for couples. Auto-reconnects silently when your connection drops — so you can sleep together even when apart. No accounts, no servers, just you two.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Connection -->
+    <section class="settings-section">
+      <div class="settings-section-label">Connection</div>
+      <div class="settings-card">
+        <div class="settings-row" style="margin-bottom: 0.85rem;">
+          <span class="settings-row-label">Auto-reconnect</span>
+          <!-- Toggle switch -->
+          <div style="
+            width: 44px; height: 24px;
+            background-color: var(--primary);
+            border-radius: 999px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.2s;
+          " role="switch" aria-checked="true" tabindex="0" aria-label="Auto-reconnect toggle">
+            <div style="
+              width: 18px; height: 18px;
+              background: white;
+              border-radius: 50%;
+              position: absolute;
+              top: 3px; right: 3px;
+              box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+              transition: transform 0.2s;
+            "></div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="settings-row">
+          <span class="settings-row-label" style="font-size: 0.82rem;">Max retry duration</span>
+          <span style="font-size: 0.82rem; color: var(--muted-foreground); font-weight: 500;">1 hour</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════ -->
+<script>
+  /* ── Screen switching ────────────────────── */
+  function switchScreen(id, tabEl) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.screen-tab').forEach(t => t.classList.remove('active'));
+
+    const screen = document.getElementById('screen-' + id);
+    if (screen) screen.classList.add('active');
+
+    // Handle both direct tab el and using querySelector to find it
+    const tab = tabEl && tabEl.classList.contains('screen-tab')
+      ? tabEl
+      : document.querySelector('[data-screen="' + id + '"]');
+    if (tab) tab.classList.add('active');
+  }
+
+  /* ── Join room tabs ──────────────────────── */
+  function switchJoinTab(id, btn) {
+    document.querySelectorAll('.join-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.join-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const panel = document.getElementById('join-' + id);
+    if (panel) panel.classList.add('active');
+  }
+
+  /* ── Slider ──────────────────────────────── */
+  function updateSlider(el) {
+    const val = parseInt(el.value);
+    const min = parseInt(el.min);
+    const max = parseInt(el.max);
+    const pct = ((val - min) / (max - min) * 100).toFixed(1) + '%';
+    el.style.setProperty('--pct', pct);
+
+    const display = document.getElementById('slider-display');
+    if (val === 60) display.textContent = '60 min';
+    else if (val === 120) display.textContent = '2 hr';
+    else display.textContent = val + ' min';
+  }
+
+  // Init slider fill on load
+  (function() {
+    const el = document.getElementById('timeout-slider');
+    if (el) updateSlider(el);
+  })();
+
+  /* ── Dark mode toggle ────────────────────── */
+  let isDark = false;
+
+  function toggleDark() {
+    isDark = !isDark;
+    applyDark(isDark);
+    // Sync settings theme buttons
+    updateThemeButtons(isDark ? 'dark' : 'light');
+  }
+
+  function applyDark(dark) {
+    document.documentElement.classList.toggle('dark', dark);
+    document.getElementById('icon-sun').style.display  = dark  ? 'block' : 'none';
+    document.getElementById('icon-moon').style.display = dark  ? 'none'  : 'block';
+  }
+
+  /* ── Settings theme buttons ──────────────── */
+  let currentTheme = 'light';
+
+  function setTheme(theme, btn) {
+    currentTheme = theme;
+    updateThemeButtons(theme);
+
+    if (theme === 'system') {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      isDark = prefersDark;
+      applyDark(prefersDark);
+    } else {
+      isDark = theme === 'dark';
+      applyDark(isDark);
+    }
+  }
+
+  function updateThemeButtons(active) {
+    ['light', 'dark', 'system'].forEach(t => {
+      const btn = document.getElementById('theme-' + t);
+      if (!btn) return;
+      const isActive = t === active;
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-pressed', String(isActive));
+    });
+  }
+
+  /* ── Generate QR placeholder ─────────────── */
+  (function generateQR() {
+    const grid = document.getElementById('qr-grid');
+    if (!grid) return;
+
+    const size = 19;
+    // Hard-coded QR-like pattern: finder patterns in corners + random data
+    const cells = [];
+
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size; c++) {
+        cells.push(isQRDark(r, c, size));
+      }
+    }
+
+    cells.forEach(dark => {
+      const div = document.createElement('div');
+      div.className = 'qr-cell' + (dark ? '' : ' white');
+      grid.appendChild(div);
+    });
+  })();
+
+  function isQRDark(r, c, size) {
+    // Top-left finder pattern (7×7)
+    if (r < 7 && c < 7) return finderCell(r, c);
+    // Top-right finder pattern
+    if (r < 7 && c >= size - 7) return finderCell(r, c - (size - 7));
+    // Bottom-left finder pattern
+    if (r >= size - 7 && c < 7) return finderCell(r - (size - 7), c);
+
+    // Timing patterns
+    if (r === 6 && c > 7 && c < size - 7) return c % 2 === 0;
+    if (c === 6 && r > 7 && r < size - 7) return r % 2 === 0;
+
+    // Quiet zone
+    if (r <= 0 || r >= size - 1 || c <= 0 || c >= size - 1) return false;
+
+    // Seeded pseudo-random for data area
+    const seed = r * 31 + c * 17 + r * c;
+    return (seed * 1664525 + 1013904223) % 4 < 2;
+  }
+
+  function finderCell(r, c) {
+    if (r === 0 || r === 6 || c === 0 || c === 6) return true;
+    if (r >= 2 && r <= 4 && c >= 2 && c <= 4) return true;
+    return false;
+  }
+</script>
+
+</body>
+</html>
