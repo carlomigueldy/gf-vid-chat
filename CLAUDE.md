@@ -22,7 +22,13 @@ These rules are MANDATORY. Some are ENFORCED by hooks in `.claude/settings.json`
 
 ### Commit Rules
 
-- NEVER include LLM models as commit author or co-author. No Co-Authored-By lines for AI.
+- **Commit author MUST be the currently authenticated GitHub CLI account.**
+  Before committing, resolve the author identity in this order:
+  1. Run `gh auth status` to get the authenticated GitHub username and email.
+  2. Use that as the commit author: `git commit --author="Name <email>"`.
+  3. If `gh auth status` fails, fall back to `git config user.name` / `git config user.email`.
+  4. NEVER use an LLM model (Claude, GPT, Copilot, etc.) as commit author or co-author.
+- NEVER include Co-Authored-By lines for AI models.
 - NEVER include any code attribution for LLM models in commits or code comments.
 - Use conventional commits: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`, `ci:`, `perf:`
 - Keep commit messages concise. Focus on the "why".
