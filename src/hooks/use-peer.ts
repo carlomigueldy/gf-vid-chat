@@ -209,10 +209,10 @@ export function usePeer({
     cleanup()
     dispatch({ type: 'CONNECTING' })
 
-    const peer = new Peer(
-      role === 'creator' ? `${PEER_ID_PREFIX}${roomId}` : undefined,
-      DEFAULT_PEER_CONFIG,
-    )
+    const peerId = role === 'creator' ? `${PEER_ID_PREFIX}${roomId}` : undefined
+    const peer = peerId
+      ? new Peer(peerId, DEFAULT_PEER_CONFIG)
+      : new Peer(DEFAULT_PEER_CONFIG)
     peerRef.current = peer
 
     // ---- creator: listen for incoming calls ----
