@@ -5,7 +5,7 @@ AGENTS.md MUST always be an exact copy of this file.
 
 ## Project
 
-gf-vid-chat — Video chat application built with modern TypeScript.
+gf-vid-chat — P2P video chat app for couples. Auto-reconnecting, QR-code-based, no accounts needed. Built for sleeping couples who don't want to wake up to re-dial when internet drops.
 
 ## Harness Engineering Rules
 
@@ -83,12 +83,37 @@ These rules are MANDATORY. Some are ENFORCED by hooks in `.claude/settings.json`
 ```
 pnpm install        # Install dependencies
 pnpm dev            # Start dev server
-pnpm build          # Production build
-pnpm test           # Run tests
-pnpm lint           # Lint check
-pnpm type-check     # TypeScript check
+pnpm build          # Production build (tsc + vite build)
+pnpm test           # Run tests (vitest)
+pnpm test:watch     # Run tests in watch mode
+pnpm lint           # Lint check (eslint)
+pnpm type-check     # TypeScript check (tsc --noEmit)
 ```
 
 ## Architecture
 
-<!-- Document key architectural decisions, data flow, and patterns here once implementation begins. -->
+Pure client-side SPA deployed to Vercel. No backend, no database.
+
+**Tech Stack**: Vite + React 19 + TypeScript + Tailwind v4 + ShadcnUI patterns + Framer Motion
+**WebRTC**: PeerJS (includes free cloud signaling server — zero backend needed)
+**QR Code**: qrcode.react (render) + jsQR (decode from image) + html5-qrcode (camera scan)
+**Routing**: react-router-dom v7
+
+### Key Flows
+- **Room creation**: Creator generates room ID → shows QR code → waits for joiner
+- **Room joining**: Joiner scans/uploads QR or pastes link → auto-connects to creator
+- **Auto-reconnect**: Exponential backoff (1s→30s cap), configurable timeout (default 1hr), full peer cleanup on each retry
+- **Theme**: Light/dark/system via CSS variables + class strategy
+
+### Critical Files
+1. `src/hooks/use-peer.ts` — Auto-reconnect state machine (most complex)
+2. `src/pages/room-page.tsx` — Orchestrates peer + media + UI
+3. `src/hooks/use-media-stream.ts` — Camera lifecycle + cleanup
+4. `src/components/qr/qr-upload.tsx` — Canvas + jsQR decode
+5. `src/lib/peer-config.ts` — PeerJS + STUN config
+
+### Docs
+- **Full implementation plan**: `docs/IMPLEMENTATION_PLAN.md`
+  - File structure, package list, core flows, state machine, animation plan
+  - Implementation phases with time estimates
+  - Verification checklist
