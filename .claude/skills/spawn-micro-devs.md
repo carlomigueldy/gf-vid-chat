@@ -1,11 +1,11 @@
 ---
 name: spawn-micro-devs
-description: Spawn the Micro Devs agent team for gf-vid-chat. Creates a coordinated team with 7 specialists (frontend, P2P, QA, shipper, architect, designer, orchestrator) ready to work on tasks.
+description: Spawn the Micro Devs agent team for gf-vid-chat. Creates a coordinated team with 8 specialists (frontend, P2P, QA, shipper, architect, designer, code-reviewer, orchestrator) ready to work on tasks.
 ---
 
 # Spawn Micro Devs Team
 
-You are about to spawn the **Micro Devs** team — a 7-agent team purpose-built for the gf-vid-chat project.
+You are about to spawn the **Micro Devs** team — an 8-agent team purpose-built for the gf-vid-chat project.
 
 ## Instructions
 
@@ -36,9 +36,11 @@ Use TaskCreate to break the user's request into discrete tasks with clear accept
 - Dependencies between tasks
 - What can run in parallel
 
-### Step 4: Spawn all 7 agents
+### Step 4: Spawn all 8 agents as teammates
 
-Spawn each agent using the Agent tool with `team_name: "micro-devs"`. Use the project-scoped agent definitions in `.claude/agents/`.
+Spawn each agent as a **teammate** (NOT a subagent) using the Agent tool with `team_name: "micro-devs"`. Use the project-scoped agent definitions in `.claude/agents/`.
+
+**CRITICAL: These are agent team teammates, not subagents.** They run as independent parallel sessions that communicate via the shared task list and messaging. The orchestrator coordinates them but does NOT spawn them as subagents.
 
 | Name | subagent_type | model | Spawn |
 |------|--------------|-------|-------|
@@ -49,8 +51,11 @@ Spawn each agent using the Agent tool with `team_name: "micro-devs"`. Use the pr
 | `shipper` | `shipper` | sonnet | On demand |
 | `architect` | `principal-architect` | opus | On demand |
 | `designer` | `product-designer` | sonnet | On demand |
+| `reviewer` | `code-reviewer` | sonnet | Before every PR |
 
-**Always spawn the orchestrator first.** The orchestrator decides which other agents to spawn based on the task.
+**Always spawn the orchestrator first.** The orchestrator coordinates teammates via messaging and the shared task list.
+
+**The `reviewer` teammate MUST be spawned before any PR is created.** It runs `/codex:review` and iterates in a feedback loop with the implementing teammates until the code scores 10/10.
 
 ### Step 5: Brief the orchestrator
 
@@ -71,13 +76,15 @@ If the user's request clearly maps to a single domain, you may spawn only the re
 
 | Request Type | Agents to Spawn |
 |---|---|
-| UI-only work | orchestrator + designer + frontend + qa |
-| P2P/video feature | orchestrator + architect + p2p + frontend + qa |
-| Bug fix (frontend) | orchestrator + frontend + qa |
-| Bug fix (P2P) | orchestrator + p2p + qa |
+| UI-only work | orchestrator + designer + frontend + qa + reviewer |
+| P2P/video feature | orchestrator + architect + p2p + frontend + qa + reviewer |
+| Bug fix (frontend) | orchestrator + frontend + qa + reviewer |
+| Bug fix (P2P) | orchestrator + p2p + qa + reviewer |
 | Architecture/planning only | orchestrator + architect |
 | Deploy/ship only | orchestrator + shipper |
-| Full feature | All 7 agents |
+| Full feature | All 8 agents |
+
+**Note:** The `reviewer` is included in every dispatch that produces code. It is NEVER optional when code changes are involved.
 
 ## Quality Gate Reminder
 
@@ -86,5 +93,6 @@ Before the team marks work complete, the orchestrator MUST verify:
 2. `pnpm lint` — zero errors  
 3. `pnpm test` — all passing
 4. `pnpm build` — successful
-5. PR created (never push to main)
-6. No AI attribution in commits
+5. `code-reviewer` Codex review — **10/10 score** (merge gate, no exceptions)
+6. PR created (never push to main)
+7. No AI attribution in commits
