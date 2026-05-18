@@ -242,7 +242,7 @@ export function usePeer({
     }
 
     // ---- joiner: call the creator once peer is open ----
-    peer.on('open', (_id) => {
+    peer.on('open', () => {
       if (!isMountedRef.current) return
       if (role === 'joiner') {
         const creatorId = `${PEER_ID_PREFIX}${roomId}`
