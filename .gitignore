@@ -44,3 +44,41 @@ coverage/
 
 # Turbo
 .turbo
+
+# Secrets & Credentials — prevent accidental exposure (public repo)
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.cert
+*.crt
+*.csr
+*.der
+*.p7b
+*.p7c
+.env.*
+!.env.example
+!.env.*.example
+*.secret
+*.secrets
+*credentials*.json
+*serviceaccount*.json
+*service-account*.json
+*keyfile*.json
+*token*.json
+!package.json
+!tsconfig*.json
+.npmrc
+.yarnrc
+.netrc
+.boto
+.s3cfg
+.gcp-credentials
+.aws/
+.ssh/
+id_rsa*
+id_ed25519*
+*.gpg
+*.asc
