@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Html5Qrcode } from 'html5-qrcode'
+import type { Html5Qrcode } from 'html5-qrcode'
 import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -27,6 +27,7 @@ export function QrScanner({ onResult, onError }: QrScannerProps) {
     setState('loading')
     setErrorMsg('')
     try {
+      const { Html5Qrcode } = await import('html5-qrcode')
       const scanner = new Html5Qrcode(containerId)
       scannerRef.current = scanner
 
@@ -63,11 +64,14 @@ export function QrScanner({ onResult, onError }: QrScannerProps) {
   }
 
   useEffect(() => {
-    startScanner()
+    queueMicrotask(() => {
+      void startScanner()
+    })
     return () => {
-      stopScanner()
+      void stopScanner()
     }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div

@@ -1,7 +1,7 @@
 import { Moon, Sun } from 'lucide-react'
 import { NavLink, Link, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { useTheme } from '@/context/theme-context'
+import { useTheme } from '@/hooks/use-theme'
 import { cn } from '@/lib/utils'
 
 export function Header() {

@@ -79,17 +79,20 @@ export function ConnectionStatus({
   retryCount = 0,
   timeRemainingMs = 0,
 }: ConnectionStatusProps) {
+  const [lastState, setLastState] = useState(state)
   const [hidden, setHidden] = useState(false)
+
+  // Reset hidden when state changes (no setState-in-effect)
+  if (state !== lastState) {
+    setLastState(state)
+    setHidden(false)
+  }
 
   // Auto-hide 3s after connected
   useEffect(() => {
-    if (state === 'connected') {
-      setHidden(false)
-      const timer = setTimeout(() => setHidden(true), 3000)
-      return () => clearTimeout(timer)
-    } else {
-      setHidden(false)
-    }
+    if (state !== 'connected') return undefined
+    const timer = setTimeout(() => setHidden(true), 3000)
+    return () => clearTimeout(timer)
   }, [state])
 
   const config = STATE_CONFIG[state]

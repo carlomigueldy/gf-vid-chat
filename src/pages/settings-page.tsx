@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { Sun, Moon, Monitor, ExternalLink } from 'lucide-react'
 import { PageContainer } from '@/components/layout/page-container'
-import { useTheme } from '@/context/theme-context'
+import { useTheme } from '@/hooks/use-theme'
 import { pageVariants } from '@/lib/animations'
 import { cn } from '@/lib/utils'
 import type { Theme } from '@/types'

@@ -37,22 +37,23 @@ export function RoomControls({
   const [isVisible, setIsVisible] = useState(true)
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  function resetHideTimer() {
-    setIsVisible(true)
-    if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
-    hideTimerRef.current = setTimeout(() => setIsVisible(false), HIDE_DELAY_MS)
-  }
-
   useEffect(() => {
-    resetHideTimer()
+    function resetHideTimer() {
+      setIsVisible(true)
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
+      hideTimerRef.current = setTimeout(() => setIsVisible(false), HIDE_DELAY_MS)
+    }
+
     document.addEventListener('pointermove', resetHideTimer)
     document.addEventListener('pointerdown', resetHideTimer)
+    hideTimerRef.current = setTimeout(() => setIsVisible(false), HIDE_DELAY_MS)
+
     return () => {
       document.removeEventListener('pointermove', resetHideTimer)
       document.removeEventListener('pointerdown', resetHideTimer)
       if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
     }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <AnimatePresence>
