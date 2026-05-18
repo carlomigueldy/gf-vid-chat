@@ -22,7 +22,13 @@ These rules are MANDATORY. Some are ENFORCED by hooks in `.claude/settings.json`
 
 ### Commit Rules
 
-- NEVER include LLM models as commit author or co-author. No Co-Authored-By lines for AI.
+- **Commit author MUST be the currently authenticated GitHub CLI account.**
+  Before committing, resolve the author identity in this order:
+  1. Run `gh auth status` to get the authenticated GitHub username and email.
+  2. Use that as the commit author: `git commit --author="Name <email>"`.
+  3. If `gh auth status` fails, fall back to `git config user.name` / `git config user.email`.
+  4. NEVER use an LLM model (Claude, GPT, Copilot, etc.) as commit author or co-author.
+- NEVER include Co-Authored-By lines for AI models.
 - NEVER include any code attribution for LLM models in commits or code comments.
 - Use conventional commits: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`, `ci:`, `perf:`
 - Keep commit messages concise. Focus on the "why".
@@ -30,15 +36,29 @@ These rules are MANDATORY. Some are ENFORCED by hooks in `.claude/settings.json`
 ### Agent Orchestration
 
 - NEVER work on everything solo. Delegate to specialist agents.
-- ALWAYS handoff to specialized agents for their domain:
-  - Frontend (Sonnet/Haiku): UI components, styling, layout
-  - Backend (Sonnet/Haiku): API routes, database, server logic
-  - Testing (Haiku): Unit tests, integration tests, e2e
-  - DevOps (Sonnet): CI/CD, deployment, infrastructure
-  - Orchestrator (Opus): Planning, coordination, code review, architecture
+- Use `/spawn-micro-devs` to spawn the Micro Devs agent team for any non-trivial task.
+- Agent definitions live in `.claude/agents/` (project-scoped, checked into the repo).
+- ALWAYS spawn agents as **teammates** (independent parallel sessions), NOT subagents.
+- ALWAYS handoff to specialized teammates for their domain:
+  - Frontend (`senior-frontend-dev`, Sonnet): UI components, styling, layout
+  - P2P (`p2p-specialist`, Sonnet): WebRTC, PeerJS, media streams
+  - Testing (`qa-e2e`, Sonnet): Unit tests, integration tests, e2e
+  - Shipping (`shipper`, Sonnet): CI/CD, Vercel deployment
+  - Architecture (`principal-architect`, Opus): System design, tech strategy
+  - Design (`product-designer`, Sonnet): UI/UX, Figma, design system
+  - Code Review (`code-reviewer`, Sonnet 4.6): Codex-powered review, 10/10 gate
+  - Orchestrator (`micro-devs-orchestrator`, Opus): Planning, coordination
 - ALWAYS pass full context during agent handoffs.
-- Spawn subagents (Haiku 4.5 / Sonnet 4.6) for simple, well-defined tasks.
 - Use relevant skills as much as possible — check available skills before starting.
+
+### Agent Team Scoping
+
+- Agent teams are **scoped to the current worktree** for isolation.
+- Team name format: `micro-devs-<worktree-name>` (NEVER bare `micro-devs`).
+- Each worktree gets its own team instance, task list, and mailbox.
+- Parallel worktrees can run independent teams without collision.
+- ALWAYS clean up the team before removing the worktree.
+- Cleanup order: shut down teammates → team lead cleans up → remove worktree.
 
 ### Quality Gates
 
