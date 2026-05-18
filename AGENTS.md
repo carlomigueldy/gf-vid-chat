@@ -1,0 +1,94 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working in this repository.
+AGENTS.md MUST always be an exact copy of this file.
+
+## Project
+
+gf-vid-chat — Video chat application built with modern TypeScript.
+
+## Harness Engineering Rules
+
+These rules are MANDATORY. Some are ENFORCED by hooks in `.claude/settings.json`.
+
+### Git Workflow
+
+- NEVER push directly to main branch. All work goes through PRs.
+- ALWAYS create a new git worktree when starting any task:
+  `git worktree add ../gf-vid-chat-<task-name> -b feat/<task-name>`
+- ALWAYS create a PR after work is done in a worktree: `gh pr create`
+- After merge, clean up: `git worktree remove ../gf-vid-chat-<task-name>`
+- NEVER work on main directly. If on main, create a branch immediately.
+
+### Commit Rules
+
+- NEVER include LLM models as commit author or co-author. No Co-Authored-By lines for AI.
+- NEVER include any code attribution for LLM models in commits or code comments.
+- Use conventional commits: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`, `ci:`, `perf:`
+- Keep commit messages concise. Focus on the "why".
+
+### Agent Orchestration
+
+- NEVER work on everything solo. Delegate to specialist agents.
+- ALWAYS handoff to specialized agents for their domain:
+  - Frontend (Sonnet/Haiku): UI components, styling, layout
+  - Backend (Sonnet/Haiku): API routes, database, server logic
+  - Testing (Haiku): Unit tests, integration tests, e2e
+  - DevOps (Sonnet): CI/CD, deployment, infrastructure
+  - Orchestrator (Opus): Planning, coordination, code review, architecture
+- ALWAYS pass full context during agent handoffs.
+- Spawn subagents (Haiku 4.5 / Sonnet 4.6) for simple, well-defined tasks.
+- Use relevant skills as much as possible — check available skills before starting.
+
+### Quality Gates
+
+- ALWAYS have all tests passing before creating a PR. Fix flaky tests immediately.
+- Use mocking or stubs when relevant (external APIs, databases, timers).
+- ALWAYS ensure Vercel deployments deploy successfully. Check status after PR.
+- ALWAYS write Clean Code: Maintainable, Scalable, Refactorable.
+- NEVER deliver unstable or low-quality work.
+- Run verification loops: type check -> lint -> test -> build -> deploy check.
+
+### Security
+
+- NEVER expose sensitive secrets or credentials in code, commits, or files.
+- NEVER write real secrets to .env files. Use .env.example with placeholders.
+- NEVER implement anything that injects malicious scripts.
+- Secret scanning runs automatically via hooks.
+
+### Token Optimization
+
+- ALWAYS optimize token usage. Be concise in responses and code.
+- ALWAYS /compact mid-task at natural breakpoints to save context.
+- Use project-scoped memory files to persist context across sessions.
+- Read memory files at session start; update at session end.
+
+### Documentation & Context
+
+- ALWAYS update project documentation and context files after significant work.
+- ALWAYS sync AGENTS.md with CLAUDE.md — they must be exact copies.
+  After any edit to CLAUDE.md: `cp CLAUDE.md AGENTS.md`
+- Use project-scoped memory at:
+  `~/.claude/projects/-home-carlomigueldy-personal-gf-vid-chat/memory/`
+
+### Orchestration Loops
+
+- **Planning loop**: Plan -> Implement -> Verify -> Document -> PR
+- **Verification loop**: Type check -> Lint -> Test -> Build -> Deploy check
+- **Feedback loop**: PR review -> Address all comments -> Re-request review
+- Everything must be 10/10 before marking complete.
+
+## Commands
+
+```
+pnpm install        # Install dependencies
+pnpm dev            # Start dev server
+pnpm build          # Production build
+pnpm test           # Run tests
+pnpm lint           # Lint check
+pnpm type-check     # TypeScript check
+```
+
+## Architecture
+
+<!-- Document key architectural decisions, data flow, and patterns here once implementation begins. -->
