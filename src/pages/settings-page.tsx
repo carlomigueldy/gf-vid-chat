@@ -31,7 +31,7 @@ export default function SettingsPage() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="flex-1"
+      className="flex-1 bg-warm-gradient"
     >
       <PageContainer>
         <main>
@@ -86,10 +86,13 @@ export default function SettingsPage() {
             </h2>
 
             <p className="text-sm font-medium text-[var(--foreground)]">
-              gf&#8209;vid&#8209;chat v1.0
+              gf&#8209;vid&#8209;chat
+            </p>
+            <p className="text-xs text-[var(--muted-foreground)] mt-0.5">
+              Version 1.0.0
             </p>
             <p className="text-xs text-[var(--muted-foreground)] mt-1">
-              P2P video · No servers · Always reconnects
+              P2P video for couples · No accounts · No servers
             </p>
             <a
               href="https://github.com"
