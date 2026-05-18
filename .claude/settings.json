@@ -1,0 +1,86 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'input=$(cat); cmd=$(echo \"$input\" | python3 -c \"import sys,json; print(json.load(sys.stdin).get(\\\"tool_input\\\",{}).get(\\\"command\\\",\\\"\\\"))\" 2>/dev/null); if echo \"$cmd\" | grep -Eq \"git push (origin )?(main|master)\"; then echo \"BLOCKED: Direct push to main/master is prohibited. Create a feature branch and open a PR instead.\" >&2; exit 2; fi; exit 0'"
+          }
+        ],
+        "description": "Block git push to main/master — enforce PR-only workflow"
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'input=$(cat); cmd=$(echo \"$input\" | python3 -c \"import sys,json; print(json.load(sys.stdin).get(\\\"tool_input\\\",{}).get(\\\"command\\\",\\\"\\\"))\" 2>/dev/null); if echo \"$cmd\" | grep -Eiq \"Co-Authored-By.*(Claude|GPT|Copilot|anthropic|openai|AI|LLM|Cursor|noreply@anthropic)\"; then echo \"BLOCKED: Commit contains LLM co-author attribution. Remove the Co-Authored-By line and retry.\" >&2; exit 2; fi; exit 0'"
+          }
+        ],
+        "description": "Block commits with LLM Co-Authored-By lines"
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'input=$(cat); file_path=$(echo \"$input\" | python3 -c \"import sys,json; print(json.load(sys.stdin).get(\\\"tool_input\\\",{}).get(\\\"file_path\\\",\\\"\\\"))\" 2>/dev/null); if echo \"$file_path\" | grep -q \"\\.env\"; then content=$(echo \"$input\" | python3 -c \"import sys,json; print(json.load(sys.stdin).get(\\\"tool_input\\\",{}).get(\\\"content\\\",\\\"\\\"))\" 2>/dev/null); if echo \"$content\" | grep -Eiq \"(sk-[a-zA-Z0-9]{20,}|AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{36}|xox[baprs]-|-----BEGIN .* PRIVATE KEY)\"; then echo \"BLOCKED: Attempting to write real secrets to .env file. Use .env.example with placeholder values instead.\" >&2; exit 2; fi; fi; exit 0'"
+          }
+        ],
+        "description": "Block writing .env files with real secrets"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'input=$(cat); file_path=$(echo \"$input\" | python3 -c \"import sys,json; print(json.load(sys.stdin).get(\\\"tool_input\\\",{}).get(\\\"file_path\\\",\\\"\\\"))\" 2>/dev/null); if echo \"$file_path\" | grep -Eq \"\\.(ts|tsx|js|jsx)$\"; then if [ -f \"$file_path\" ]; then matches=$(grep -n \"console\\.log\" \"$file_path\" 2>/dev/null || true); if [ -n \"$matches\" ]; then echo \"WARNING: console.log found in $file_path\" >&2; echo \"$matches\" | head -5 >&2; fi; fi; fi; exit 0'"
+          }
+        ],
+        "description": "Warn about console.log statements after code edits"
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'cd /home/carlomigueldy/personal/gf-vid-chat 2>/dev/null || exit 0; if git rev-parse --git-dir > /dev/null 2>&1; then staged=$(git diff --cached --name-only 2>/dev/null || true); if [ -n \"$staged\" ]; then while IFS= read -r file; do if [ -f \"$file\" ] && grep -Eq \"(sk-[a-zA-Z0-9]{32,}|AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{36}|-----BEGIN .* PRIVATE KEY)\" \"$file\" 2>/dev/null; then echo \"CRITICAL: Potential secret found in staged file: $file\" >&2; fi; done <<< \"$staged\"; fi; fi; exit 0'"
+          }
+        ],
+        "description": "Verify no secrets in staged files before session ends"
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'cd /home/carlomigueldy/personal/gf-vid-chat 2>/dev/null || exit 0; if [ -f CLAUDE.md ] && [ -f AGENTS.md ]; then if ! diff -q CLAUDE.md AGENTS.md > /dev/null 2>&1; then echo \"WARNING: CLAUDE.md and AGENTS.md are out of sync! Run: cp CLAUDE.md AGENTS.md\" >&2; fi; elif [ -f CLAUDE.md ] && [ ! -f AGENTS.md ]; then echo \"WARNING: AGENTS.md is missing! Copy from CLAUDE.md.\" >&2; fi; exit 0'"
+          }
+        ],
+        "description": "Verify CLAUDE.md and AGENTS.md are in sync"
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git branch:*)",
+      "Bash(git worktree:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(cat:*)",
+      "Bash(diff:*)",
+      "Bash(gh pr:*)",
+      "Bash(pnpm:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vitest:*)"
+    ]
+  }
+}
