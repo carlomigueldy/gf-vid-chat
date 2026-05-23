@@ -48,6 +48,9 @@ playwright/.cache/
 # Turbo
 .turbo
 
+# Raw demo recordings — keep only the encoded GIF in repo
+docs/recordings/
+
 # Secrets & Credentials — prevent accidental exposure (public repo)
 *.pem
 *.key
