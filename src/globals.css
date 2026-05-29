@@ -2,6 +2,11 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@theme {
+  --font-sans: 'Plus Jakarta Sans Variable', system-ui, -apple-system, sans-serif;
+  --font-display: 'Fredoka Variable', 'Plus Jakarta Sans Variable', system-ui, sans-serif;
+}
+
 /* ============================================================
    Design Direction: Soft + Warm (Design B)
    Primary: Rose/pink oklch(0.65 0.18 12)
@@ -69,7 +74,7 @@
   }
   body {
     @apply bg-[var(--background)] text-[var(--foreground)];
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family: var(--font-sans);
   }
 }
 
