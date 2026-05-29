@@ -63,79 +63,59 @@ export function RoomControls({
           initial="initial"
           animate="animate"
           exit="exit"
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30"
+          className="fixed bottom-0 left-1/2 z-30 -translate-x-1/2 pb-[calc(1.25rem+env(safe-area-inset-bottom))]"
         >
           <div
             role="toolbar"
             aria-label="Call controls"
-            className="flex items-center gap-3 px-5 py-3 rounded-full
-              bg-[var(--background)]/90 backdrop-blur-md
-              border border-[var(--border)] shadow-warm-lg"
+            className="flex items-center gap-2.5 rounded-full border border-white/10 bg-[var(--card)]/70 px-4 py-2.5 shadow-glow backdrop-blur-xl"
           >
-            {/* Mic */}
             <Button
-              variant={isMicOn ? 'ghost' : undefined}
+              variant="ghost"
               size="icon"
               onClick={onToggleMic}
               aria-label={isMicOn ? 'Mute microphone' : 'Unmute microphone'}
               aria-pressed={!isMicOn}
               className={cn(
                 'size-11 rounded-full',
-                !isMicOn && 'bg-red-500/10 text-red-500 hover:bg-red-500/20 hover:text-red-500'
+                !isMicOn && 'bg-red-500/15 text-red-500 hover:bg-red-500/25 hover:text-red-500'
               )}
             >
-              {isMicOn ? (
-                <Mic className="size-5" aria-hidden="true" />
-              ) : (
-                <MicOff className="size-5" aria-hidden="true" />
-              )}
+              {isMicOn ? <Mic className="size-5" aria-hidden="true" /> : <MicOff className="size-5" aria-hidden="true" />}
             </Button>
 
-            {/* Camera */}
             <Button
-              variant={isCameraOn ? 'ghost' : undefined}
+              variant="ghost"
               size="icon"
               onClick={onToggleCamera}
               aria-label={isCameraOn ? 'Turn off camera' : 'Turn on camera'}
               aria-pressed={!isCameraOn}
               className={cn(
                 'size-11 rounded-full',
-                !isCameraOn && 'bg-red-500/10 text-red-500 hover:bg-red-500/20 hover:text-red-500'
+                !isCameraOn && 'bg-red-500/15 text-red-500 hover:bg-red-500/25 hover:text-red-500'
               )}
             >
-              {isCameraOn ? (
-                <Video className="size-5" aria-hidden="true" />
-              ) : (
-                <VideoOff className="size-5" aria-hidden="true" />
-              )}
+              {isCameraOn ? <Video className="size-5" aria-hidden="true" /> : <VideoOff className="size-5" aria-hidden="true" />}
             </Button>
 
-            {/* Fullscreen */}
             <Button
               variant="ghost"
               size="icon"
               onClick={onToggleFullscreen}
               aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+              aria-pressed={isFullscreen}
               className="size-11 rounded-full"
             >
-              {isFullscreen ? (
-                <Minimize className="size-5" aria-hidden="true" />
-              ) : (
-                <Maximize className="size-5" aria-hidden="true" />
-              )}
+              {isFullscreen ? <Minimize className="size-5" aria-hidden="true" /> : <Maximize className="size-5" aria-hidden="true" />}
             </Button>
 
-            {/* Divider */}
-            <div className="w-px h-6 bg-[var(--border)] mx-1" aria-hidden="true" />
+            <div className="mx-1 h-6 w-px bg-[var(--border)]" aria-hidden="true" />
 
-            {/* Hang up */}
             <button
               type="button"
               onClick={onHangUp}
               aria-label="End call"
-              className="size-11 rounded-full bg-red-500 hover:bg-red-600 text-white
-                transition-colors duration-150 flex items-center justify-center
-                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+              className="flex size-11 items-center justify-center rounded-full bg-[var(--destructive)] text-white shadow-[0_6px_16px_-4px_oklch(0.6_0.24_20_/_0.6)] transition-[transform,filter] duration-150 hover:brightness-110 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--destructive)] focus-visible:ring-offset-2"
             >
               <PhoneOff className="size-5" aria-hidden="true" />
             </button>

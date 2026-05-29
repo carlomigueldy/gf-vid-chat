@@ -74,25 +74,22 @@ export function QrScanner({ onResult, onError }: QrScannerProps) {
   }, [])
 
   return (
-    <div
-      role="region"
-      aria-label="QR code camera scanner"
-      className="flex flex-col items-center gap-3"
-    >
-      <div className="relative aspect-square max-w-64 w-full rounded-xl overflow-hidden bg-[var(--muted)]">
+    <div role="region" aria-label="QR code camera scanner" className="flex flex-col items-center gap-3">
+      <div className="relative aspect-square w-full max-w-64 overflow-hidden rounded-3xl bg-[var(--muted)] shadow-warm-md">
         {state === 'loading' && (
           <div className="absolute inset-0 flex items-center justify-center">
             <Loader2 className="size-8 text-[var(--muted-foreground)] animate-spin" />
           </div>
         )}
-        <div id={containerId} className="w-full h-full" aria-label="Camera viewfinder" />
+        <div id={containerId} className="h-full w-full" aria-label="Camera viewfinder" />
 
         {state === 'scanning' && (
           <>
-            <div className="absolute top-2 left-2 size-6 border-t-2 border-l-2 border-[var(--primary)] rounded-tl" />
-            <div className="absolute top-2 right-2 size-6 border-t-2 border-r-2 border-[var(--primary)] rounded-tr" />
-            <div className="absolute bottom-2 left-2 size-6 border-b-2 border-l-2 border-[var(--primary)] rounded-bl" />
-            <div className="absolute bottom-2 right-2 size-6 border-b-2 border-r-2 border-[var(--primary)] rounded-br" />
+            <div aria-hidden="true" className="pointer-events-none absolute top-3 left-3 size-7 rounded-tl-lg border-l-[3px] border-t-[3px] border-[var(--primary)]" />
+            <div aria-hidden="true" className="pointer-events-none absolute top-3 right-3 size-7 rounded-tr-lg border-r-[3px] border-t-[3px] border-[var(--primary)]" />
+            <div aria-hidden="true" className="pointer-events-none absolute bottom-3 left-3 size-7 rounded-bl-lg border-b-[3px] border-l-[3px] border-[var(--primary)]" />
+            <div aria-hidden="true" className="pointer-events-none absolute bottom-3 right-3 size-7 rounded-br-lg border-b-[3px] border-r-[3px] border-[var(--primary)]" />
+            <div aria-hidden="true" className="animate-scanline pointer-events-none absolute left-4 right-4 h-0.5 rounded-full bg-[var(--primary)]/70 shadow-[0_0_8px_var(--glow-primary)]" />
           </>
         )}
       </div>
@@ -109,17 +106,10 @@ export function QrScanner({ onResult, onError }: QrScannerProps) {
       )}
 
       {state === 'scanning' && (
-        <p className="text-sm text-[var(--muted-foreground)] text-center mt-2">
-          Point camera at QR code
-        </p>
+        <p className="mt-1 text-sm text-[var(--muted-foreground)] text-center">Point camera at QR code</p>
       )}
 
-      <div
-        ref={liveRegionRef}
-        aria-live="polite"
-        aria-atomic="true"
-        className="sr-only"
-      />
+      <div ref={liveRegionRef} aria-live="polite" aria-atomic="true" className="sr-only" />
     </div>
   )
 }

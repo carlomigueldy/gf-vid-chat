@@ -1,11 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom'
+import { AnimatePresence } from 'framer-motion'
 import { CameraOff, Clock } from 'lucide-react'
 import { useMediaStream } from '@/hooks/use-media-stream'
 import { usePeer } from '@/hooks/use-peer'
 import { VideoGrid } from '@/components/video/video-grid'
 import { ConnectionStatus } from '@/components/video/connection-status'
+import { ReconnectOverlay } from '@/components/video/reconnect-overlay'
 import { RoomControls } from '@/components/room/room-controls'
+import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import type { Role } from '@/types'
 
@@ -39,20 +42,13 @@ export default function RoomPage() {
     toggleVideo,
   } = useMediaStream()
 
-  const {
-    remoteStream,
-    connectionState,
-    retryCount,
-    timeRemainingMs,
-    disconnect,
-  } = usePeer({
+  const { remoteStream, connectionState, retryCount, timeRemainingMs, disconnect } = usePeer({
     roomId: roomId ?? '',
     role,
     localStream,
     retryTimeoutMs,
   })
 
-  // Fullscreen management
   const handleToggleFullscreen = useCallback(async () => {
     try {
       if (!document.fullscreenElement) {
@@ -75,40 +71,48 @@ export default function RoomPage() {
     return () => document.removeEventListener('fullscreenchange', onFullscreenChange)
   }, [])
 
-  // Navigate home on hang up
   function handleHangUp() {
     disconnect()
     navigate('/')
   }
 
-  // ── Error: camera denied ─────────────────────────────────────────────────
+  // ── Error: camera denied ────────────────────────────────────────────────
   if (mediaError) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen gap-6 bg-[var(--background)] px-4 text-center">
-        <CameraOff className="size-16 text-[var(--muted-foreground)]" aria-hidden="true" />
-        <h1 className="text-xl font-semibold text-[var(--foreground)]">
-          Camera access required
-        </h1>
-        <p className="text-sm text-[var(--muted-foreground)] max-w-sm">
-          Please allow camera and microphone access in your browser settings.
-        </p>
-        <Button onClick={() => window.location.reload()}>Try again</Button>
+      <div className="flex min-h-[100dvh] items-center justify-center bg-[var(--background)] bg-warm-gradient px-4">
+        <Card className="flex max-w-sm flex-col items-center gap-5 p-8 text-center">
+          <CameraOff className="size-14 text-[var(--muted-foreground)]" aria-hidden="true" />
+          <h1 className="font-display text-xl font-semibold text-[var(--foreground)]">Camera access needed</h1>
+          <p className="text-sm text-[var(--muted-foreground)]">
+            Please allow camera and microphone access in your browser settings, then try again.
+          </p>
+          <Button onClick={() => window.location.reload()} className="w-full">
+            Try again
+          </Button>
+        </Card>
       </div>
     )
   }
 
-  // ── Error: session timed out ─────────────────────────────────────────────
+  // ── Session timed out ───────────────────────────────────────────────────
   if (connectionState === 'timeout') {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen gap-6 bg-[var(--background)] px-4 text-center">
-        <Clock className="size-16 text-[var(--muted-foreground)]" aria-hidden="true" />
-        <h1 className="text-xl font-semibold text-[var(--foreground)]">
-          Session ended
-        </h1>
-        <p className="text-sm text-[var(--muted-foreground)] max-w-sm">
-          The auto-reconnect window has expired.
-        </p>
-        <Button onClick={() => navigate('/')}>Start new room</Button>
+      <div className="flex min-h-[100dvh] items-center justify-center bg-[var(--background)] bg-warm-gradient px-4">
+        <Card className="flex max-w-sm flex-col items-center gap-5 p-8 text-center">
+          <Clock className="size-14 text-[var(--muted-foreground)]" aria-hidden="true" />
+          <h1 className="font-display text-xl font-semibold text-[var(--foreground)]">Sleep tight 🌙</h1>
+          <p className="text-sm text-[var(--muted-foreground)]">
+            The auto-reconnect window has ended. You can start a fresh room whenever you like.
+          </p>
+          <div className="flex w-full flex-col gap-2">
+            <Button onClick={() => window.location.reload()} className="w-full">
+              Reconnect
+            </Button>
+            <Button variant="ghost" onClick={() => navigate('/')} className="w-full">
+              Back home
+            </Button>
+          </div>
+        </Card>
       </div>
     )
   }
@@ -116,15 +120,9 @@ export default function RoomPage() {
   const roomUrl = buildRoomUrl(roomId ?? '')
 
   return (
-    <main
-      role="main"
-      aria-label="Video call room"
-      className="relative w-full h-screen overflow-hidden bg-black"
-    >
-      {/* Hidden h1 for screen readers */}
+    <main role="main" aria-label="Video call room" className="relative h-[100dvh] w-full overflow-hidden bg-[var(--background)]">
       <h1 className="sr-only">Active video call with {roomId}</h1>
 
-      {/* Full-screen video layout */}
       <VideoGrid
         localStream={localStream}
         remoteStream={remoteStream}
@@ -132,14 +130,12 @@ export default function RoomPage() {
         connectionState={connectionState}
       />
 
-      {/* Floating connection badge */}
-      <ConnectionStatus
-        state={connectionState}
-        retryCount={retryCount}
-        timeRemainingMs={timeRemainingMs}
-      />
+      <ConnectionStatus state={connectionState} retryCount={retryCount} timeRemainingMs={timeRemainingMs} />
 
-      {/* Floating call controls */}
+      <AnimatePresence>
+        {connectionState === 'reconnecting' && <ReconnectOverlay key="reconnect" retryCount={retryCount} />}
+      </AnimatePresence>
+
       <RoomControls
         isMicOn={isAudioEnabled}
         isCameraOn={isVideoEnabled}

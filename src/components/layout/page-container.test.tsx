@@ -32,4 +32,15 @@ describe('PageContainer', () => {
     const wrapper = container.firstChild as HTMLElement
     expect(wrapper.className).toContain('extra-class')
   })
+
+  it('allows max-w override via className', () => {
+    const { container } = render(
+      <PageContainer className="max-w-md">
+        <span />
+      </PageContainer>
+    )
+    const wrapper = container.firstChild as HTMLElement
+    expect(wrapper.className).toContain('max-w-md')
+    expect(wrapper.className).not.toContain('max-w-2xl')
+  })
 })
