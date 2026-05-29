@@ -1,5 +1,8 @@
+import { useRef, useState } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
 import { VideoPlayer } from './video-player'
 import { QrDisplay } from '@/components/qr/qr-display'
+import { usePreferences } from '@/hooks/use-preferences'
 import type { ConnectionState } from '@/types'
 
 interface VideoGridProps {
@@ -11,59 +14,63 @@ interface VideoGridProps {
 
 const WAITING_STATES: ConnectionState[] = ['initializing', 'waiting']
 
-export function VideoGrid({
-  localStream,
-  remoteStream,
-  roomUrl,
-  connectionState,
-}: VideoGridProps) {
+export function VideoGrid({ localStream, remoteStream, roomUrl, connectionState }: VideoGridProps) {
   const isWaiting = WAITING_STATES.includes(connectionState)
+  const { mirrorVideo } = usePreferences()
+  const [isLocalMain, setIsLocalMain] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const reduce = useReducedMotion()
+
+  const mainStream = isLocalMain ? localStream : remoteStream
+  const pipStream = isLocalMain ? remoteStream : localStream
+  const pipIsLocal = !isLocalMain
 
   return (
-    <div
-      role="main"
-      aria-label="Video call"
-      className="relative w-full h-full"
-    >
-      {/* Screen-reader only state announcer */}
+    <div ref={containerRef} role="main" aria-label="Video call" className="relative h-full w-full overflow-hidden">
       <p aria-live="polite" className="sr-only">
-        {isWaiting ? 'Waiting for your partner to join' : `Call status: ${connectionState}`}
+        {isWaiting ? 'Partner has not joined yet' : `Call status: ${connectionState}`}
       </p>
 
       {isWaiting ? (
-        /* Waiting state — show QR centered */
-        <div className="flex flex-col items-center justify-center min-h-screen gap-6 bg-[var(--background)] px-4">
+        <div className="flex min-h-[100dvh] flex-col items-center justify-center gap-6 bg-[var(--background)] bg-warm-gradient px-4">
           <h1 className="sr-only">Active video call</h1>
           <QrDisplay url={roomUrl} />
-          <p className="text-sm text-[var(--muted-foreground)] animate-pulse-slow">
-            Waiting for your partner…
-          </p>
+          <p className="animate-breathe text-sm text-[var(--muted-foreground)]">Waiting for your partner…</p>
         </div>
       ) : (
-        /* Connected state — remote video fullscreen + local PiP */
         <>
-          {/* Remote video — fills entire parent */}
           <VideoPlayer
-            stream={remoteStream}
-            label="Remote video"
+            stream={mainStream}
+            muted={isLocalMain}
+            mirror={isLocalMain && mirrorVideo}
+            label={isLocalMain ? 'Your video' : 'Partner video'}
             objectFit="cover"
-            className="absolute inset-0 w-full h-full rounded-none"
+            className="absolute inset-0 h-full w-full rounded-none"
           />
 
-          {/* Dark scrim for badge readability */}
-          <div className="absolute inset-0 bg-black/10 pointer-events-none" aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-0 bg-black/10" aria-hidden="true" />
 
-          {/* Local PiP — bottom-right above controls */}
-          <div className="absolute bottom-24 right-4 w-28 h-40 md:w-36 md:h-52 rounded-xl overflow-hidden shadow-lg border-2 border-white/20 z-10">
+          <motion.button
+            type="button"
+            drag
+            dragConstraints={containerRef}
+            dragMomentum={false}
+            dragElastic={0.08}
+            whileTap={reduce ? undefined : { scale: 0.96 }}
+            onClick={() => setIsLocalMain((v) => !v)}
+            aria-label={pipIsLocal ? 'Show your video full screen' : 'Show partner video full screen'}
+            className="absolute bottom-28 right-4 z-10 h-40 w-28 cursor-grab overflow-hidden rounded-2xl border-2 border-white/30 shadow-glow active:cursor-grabbing md:h-52 md:w-36"
+          >
+            <span className="absolute left-1/2 top-1.5 z-10 h-1 w-8 -translate-x-1/2 rounded-full bg-white/50" aria-hidden="true" />
             <VideoPlayer
-              stream={localStream}
+              stream={pipStream}
               muted
-              mirror
-              label="Your video"
+              mirror={pipIsLocal && mirrorVideo}
+              label={pipIsLocal ? 'Your video' : 'Partner video'}
               objectFit="cover"
-              className="w-full h-full rounded-none"
+              className="pointer-events-none h-full w-full rounded-none"
             />
-          </div>
+          </motion.button>
         </>
       )}
     </div>
