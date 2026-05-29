@@ -21,6 +21,19 @@
 - **Warm shadows**: Use `.shadow-warm`, `.shadow-warm-md`, `.shadow-warm-lg` utilities — not Tailwind's default shadow (which uses pure black). The shadow tokens are defined in `globals.css`.
 - **Gradient option**: Apply `.bg-warm-gradient` to the page root for a subtle rose glow at the top of the viewport. Optional — use on home and settings pages, NOT on the room page (video fills the screen).
 
+### Elevated Expression — "Soft & Rounded" (2026-05-30)
+
+The Soft + Warm palette is unchanged. Expression is elevated:
+
+- **Display font:** Fredoka (`font-display`). **Body/UI font:** Plus Jakarta Sans (`--font-sans`). Both self-hosted via `@fontsource`.
+- **Buttons** are full **pills** with a rose **gradient** (`--primary-gradient`) and a soft **glow** (`.shadow-glow`).
+- **Cards** are `rounded-3xl`, borderless, with warm soft shadows.
+- **SegmentedControl** (`src/components/ui/segmented-control.tsx`) is the shared "pick one" primitive: Home Start/Join, Join method, Settings theme.
+- **Home** is a **segmented hero** (one toggle swaps Start ⇄ Join in place), not two side-by-side cards.
+- **Active call** uses a glassy floating dock, a draggable tap-to-swap PiP, and a **calm breathing reconnect overlay** (never a red full-screen error).
+- **Motion** is spring-based and playful but calm; all of it respects `prefers-reduced-motion`.
+- **Responsive:** phone-first; content stays in a comfortable centered column (`max-w-md`/`max-w-xl`) and never stretches edge-to-edge on large screens. `100dvh` + safe-area insets on the call.
+
 ---
 
 ## Design Tokens
