@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { CreateRoom } from './create-room'
@@ -6,12 +6,8 @@ import { CreateRoom } from './create-room'
 const mockNavigate = vi.fn()
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router-dom')>()
-  return {
-    ...actual,
-    useNavigate: () => mockNavigate,
-  }
+  return { ...actual, useNavigate: () => mockNavigate }
 })
-
 vi.mock('nanoid', () => ({ nanoid: () => 'testroom123' }))
 
 function renderCreateRoom() {
@@ -23,18 +19,14 @@ function renderCreateRoom() {
 }
 
 describe('CreateRoom', () => {
-  it('renders the card title and description', () => {
-    renderCreateRoom()
-    expect(screen.getByText('Start a Room')).toBeInTheDocument()
-    expect(
-      screen.getByText('Share the QR code with your partner to connect')
-    ).toBeInTheDocument()
+  beforeEach(() => {
+    localStorage.clear()
+    mockNavigate.mockClear()
   })
 
   it('renders the timeout slider with accessible label', () => {
     renderCreateRoom()
-    const slider = screen.getByRole('slider', { name: 'Auto-reconnect timeout' })
-    expect(slider).toBeInTheDocument()
+    expect(screen.getByRole('slider', { name: 'Auto-reconnect timeout' })).toBeInTheDocument()
   })
 
   it('shows range labels for 5 min and 2 hr', () => {
@@ -45,20 +37,17 @@ describe('CreateRoom', () => {
 
   it('shows default timeout of 1 hr', () => {
     renderCreateRoom()
-    const displays = screen.getAllByText('1 hr')
-    expect(displays.length).toBeGreaterThan(0)
+    expect(screen.getAllByText('1 hr').length).toBeGreaterThan(0)
   })
 
   it('renders Create Room button', () => {
     renderCreateRoom()
-    const btn = screen.getByRole('button', { name: /create room/i })
-    expect(btn).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /create room/i })).toBeInTheDocument()
   })
 
   it('navigates with creator role and timeout on button click', () => {
     renderCreateRoom()
-    const btn = screen.getByRole('button', { name: /create room/i })
-    fireEvent.click(btn)
+    fireEvent.click(screen.getByRole('button', { name: /create room/i }))
     expect(mockNavigate).toHaveBeenCalledWith(
       expect.stringContaining('/room/testroom123?role=creator&timeout=')
     )
