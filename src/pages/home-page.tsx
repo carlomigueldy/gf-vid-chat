@@ -46,7 +46,7 @@ export default function HomePage() {
             className="mb-5"
           />
 
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             <motion.div key={mode} variants={panelSwap} initial="initial" animate="animate" exit="exit">
               {mode === 'start' ? <CreateRoom /> : <JoinRoom />}
             </motion.div>

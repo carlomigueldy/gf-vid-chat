@@ -32,9 +32,9 @@ describe('HomePage', () => {
     expect(screen.getByRole('button', { name: /create room/i })).toBeInTheDocument()
   })
 
-  it('switches to the Join panel when "Join a room" is selected', () => {
+  it('switches to the Join panel when "Join a room" is selected', async () => {
     renderHome()
     fireEvent.click(screen.getByRole('radio', { name: /join a room/i }))
-    expect(screen.getByRole('radiogroup', { name: 'Join method' })).toBeInTheDocument()
+    expect(await screen.findByRole('radiogroup', { name: 'Join method' })).toBeInTheDocument()
   })
 })
