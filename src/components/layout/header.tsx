@@ -1,12 +1,13 @@
+import { motion, useReducedMotion } from 'framer-motion'
 import { Moon, Sun } from 'lucide-react'
 import { NavLink, Link, useLocation } from 'react-router-dom'
-import { Button } from '@/components/ui/button'
 import { useTheme } from '@/hooks/use-theme'
 import { cn } from '@/lib/utils'
 
 export function Header() {
   const { theme, setTheme } = useTheme()
   const location = useLocation()
+  const reduce = useReducedMotion()
 
   const isDark =
     theme === 'dark' ||
@@ -16,59 +17,65 @@ export function Header() {
     setTheme(isDark ? 'light' : 'dark')
   }
 
+  const navLink = (to: string, label: string, end?: boolean) => (
+    <NavLink
+      to={to}
+      end={end}
+      aria-current={location.pathname === to ? 'page' : undefined}
+      className={({ isActive }) =>
+        cn(
+          'text-sm transition-colors duration-150',
+          isActive
+            ? 'text-[var(--primary)] font-semibold'
+            : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
+        )
+      }
+    >
+      {label}
+    </NavLink>
+  )
+
   return (
-    <header role="banner" className="sticky top-0 z-50 bg-[var(--background)]/80 backdrop-blur-md border-b border-[var(--border)]">
-      <div className="flex items-center justify-between h-14 px-4 md:px-6 max-w-screen-lg mx-auto w-full">
+    <header role="banner" className="sticky top-0 z-50 px-4 pt-3 md:pt-4">
+      <div
+        className="mx-auto flex h-12 w-full max-w-screen-lg items-center justify-between
+          rounded-full border border-[var(--border)] bg-[var(--card)]/80 px-4 backdrop-blur-md
+          shadow-warm lg:max-w-2xl"
+      >
         <Link
           to="/"
-          className="font-semibold text-base tracking-tight text-[var(--foreground)] hover:opacity-80 transition-opacity duration-150"
+          className="group inline-flex items-center gap-2 font-display text-base font-semibold tracking-tight text-[var(--foreground)] transition-opacity duration-150 hover:opacity-80"
           aria-label="gf-vid-chat home"
         >
+          <span
+            className="size-2.5 rounded-full bg-[var(--primary)] shadow-[0_0_0_4px_var(--glow-primary)]"
+            aria-hidden="true"
+          />
           gf&#8209;vid&#8209;chat
         </Link>
 
         <nav aria-label="Main navigation" className="flex items-center gap-4">
-          <NavLink
-            to="/"
-            end
-            aria-current={location.pathname === '/' ? 'page' : undefined}
-            className={({ isActive }) =>
-              cn(
-                'text-sm transition-colors duration-150',
-                isActive
-                  ? 'text-[var(--foreground)] font-medium'
-                  : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-              )
-            }
-          >
-            Home
-          </NavLink>
-          <NavLink
-            to="/settings"
-            aria-current={location.pathname === '/settings' ? 'page' : undefined}
-            className={({ isActive }) =>
-              cn(
-                'text-sm transition-colors duration-150',
-                isActive
-                  ? 'text-[var(--foreground)] font-medium'
-                  : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-              )
-            }
-          >
-            Settings
-          </NavLink>
+          {navLink('/', 'Home', true)}
+          {navLink('/settings', 'Settings')}
         </nav>
 
-        <Button
-          variant="ghost"
-          size="icon"
+        <button
+          type="button"
           onClick={handleToggleTheme}
-          className="rounded-full"
+          className="flex size-9 items-center justify-center rounded-full text-[var(--foreground)] transition-colors hover:bg-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
           aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
           title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
         >
-          {isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}
-        </Button>
+          <motion.span
+            key={isDark ? 'sun' : 'moon'}
+            initial={reduce ? false : { rotate: -90, opacity: 0 }}
+            animate={{ rotate: 0, opacity: 1 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            className="inline-flex"
+          >
+            {isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}
+          </motion.span>
+        </button>
       </div>
     </header>
   )
