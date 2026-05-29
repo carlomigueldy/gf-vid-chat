@@ -109,7 +109,7 @@ export function ConnectionStatus({
       aria-live="polite"
       aria-atomic="true"
       aria-label={displayText}
-      className="absolute top-4 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1"
+      className="absolute top-4 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-1"
     >
       <AnimatePresence>
         {!hidden && (

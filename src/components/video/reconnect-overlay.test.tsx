@@ -5,7 +5,6 @@ import { ReconnectOverlay } from './reconnect-overlay'
 describe('ReconnectOverlay', () => {
   it('renders a reassuring status message', () => {
     render(<ReconnectOverlay />)
-    expect(screen.getByRole('status')).toBeInTheDocument()
     expect(screen.getByText(/hang tight/i)).toBeInTheDocument()
     expect(screen.getByText(/reconnecting you/i)).toBeInTheDocument()
   })

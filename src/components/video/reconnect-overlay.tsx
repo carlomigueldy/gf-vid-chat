@@ -13,8 +13,6 @@ export function ReconnectOverlay({ retryCount = 0 }: ReconnectOverlayProps) {
       initial="initial"
       animate="animate"
       exit="exit"
-      role="status"
-      aria-live="polite"
       className="pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 px-6 text-center"
     >
       <div
@@ -24,8 +22,8 @@ export function ReconnectOverlay({ retryCount = 0 }: ReconnectOverlayProps) {
       <div className="animate-breathe flex size-16 items-center justify-center rounded-full border-2 border-[var(--primary)]/50">
         <Heart className="size-7 fill-[var(--primary)] text-[var(--primary)]" aria-hidden="true" />
       </div>
-      <p className="font-display text-xl font-semibold text-white drop-shadow">Hang tight…</p>
-      <p className="max-w-xs text-sm text-white/85 drop-shadow">
+      <p className="font-display text-xl font-semibold text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]">Hang tight…</p>
+      <p className="max-w-xs text-sm text-white/85 drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]">
         We lost the connection, but we're quietly reconnecting you.
         {retryCount > 0 && (
           <>
