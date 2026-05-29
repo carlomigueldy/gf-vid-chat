@@ -1,12 +1,11 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { Moon, Sun } from 'lucide-react'
-import { NavLink, Link, useLocation } from 'react-router-dom'
+import { NavLink, Link } from 'react-router-dom'
 import { useTheme } from '@/hooks/use-theme'
 import { cn } from '@/lib/utils'
 
 export function Header() {
   const { theme, setTheme } = useTheme()
-  const location = useLocation()
   const reduce = useReducedMotion()
 
   const isDark =
@@ -21,7 +20,6 @@ export function Header() {
     <NavLink
       to={to}
       end={end}
-      aria-current={location.pathname === to ? 'page' : undefined}
       className={({ isActive }) =>
         cn(
           'text-sm transition-colors duration-150',
@@ -64,7 +62,6 @@ export function Header() {
           onClick={handleToggleTheme}
           className="flex size-9 items-center justify-center rounded-full text-[var(--foreground)] transition-colors hover:bg-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
           aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-          title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
         >
           <motion.span
             key={isDark ? 'sun' : 'moon'}
