@@ -4,17 +4,11 @@ import { nanoid } from 'nanoid'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { usePreferences } from '@/hooks/use-preferences'
+import { formatDuration } from '@/lib/format'
 
 const MIN_MS = 300_000   // 5 min
 const MAX_MS = 7_200_000 // 2 hr
 const STEP_MS = 300_000  // 5 min
-
-function formatDuration(ms: number): string {
-  const minutes = ms / 60_000
-  if (minutes < 60) return `${minutes} min`
-  const hours = minutes / 60
-  return hours === 1 ? '1 hr' : `${hours} hr`
-}
 
 export function CreateRoom() {
   const { defaultTimeoutMs } = usePreferences()
