@@ -80,8 +80,6 @@ test.describe('Room controls', () => {
     await page.getByRole('button', { name: /end call/i }).click()
 
     await expect(page).toHaveURL(/\/$/)
-    await expect(page.getByRole('heading', { level: 1 })).toContainText(
-      /gf.?vid.?chat/i
-    )
+    await expect(page.getByRole('radio', { name: /start a room/i })).toBeVisible()
   })
 })
