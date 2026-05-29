@@ -56,7 +56,6 @@ export default function SettingsPage() {
                 step={STEP_MS}
                 value={defaultTimeoutMs}
                 onChange={(e) => setDefaultTimeoutMs(Number(e.target.value))}
-                aria-label="Default auto-reconnect window"
                 aria-valuetext={formatDuration(defaultTimeoutMs)}
                 style={{ background: `linear-gradient(to right, var(--primary) ${pct}%, var(--secondary) ${pct}%)` }}
                 className="w-full h-2.5 appearance-none rounded-full cursor-pointer
