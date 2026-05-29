@@ -108,9 +108,9 @@ export function QrUpload({ onResult }: QrUploadProps) {
     >
       <label
         className={cn(
-          'border-2 border-dashed rounded-xl p-8 text-center cursor-pointer block transition-colors duration-150',
+          'block cursor-pointer rounded-3xl border-2 border-dashed p-8 text-center transition-colors duration-150',
           isDragging
-            ? 'border-[var(--primary)] bg-[var(--accent)]'
+            ? 'border-[var(--primary)] bg-[var(--accent)] shadow-glow'
             : 'border-[var(--border)] hover:border-[var(--primary)] hover:bg-[var(--accent)]'
         )}
         onDragOver={handleDragOver}
