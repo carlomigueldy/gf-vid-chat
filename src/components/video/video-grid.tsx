@@ -19,6 +19,7 @@ export function VideoGrid({ localStream, remoteStream, roomUrl, connectionState 
   const { mirrorVideo } = usePreferences()
   const [isLocalMain, setIsLocalMain] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
+  const didDragRef = useRef(false)
   const reduce = useReducedMotion()
 
   const mainStream = isLocalMain ? localStream : remoteStream
@@ -56,8 +57,16 @@ export function VideoGrid({ localStream, remoteStream, roomUrl, connectionState 
             dragConstraints={containerRef}
             dragMomentum={false}
             dragElastic={0.08}
+            onDragStart={() => {
+              didDragRef.current = false
+            }}
+            onDrag={() => {
+              didDragRef.current = true
+            }}
             whileTap={reduce ? undefined : { scale: 0.96 }}
-            onClick={() => setIsLocalMain((v) => !v)}
+            onClick={() => {
+              if (!didDragRef.current) setIsLocalMain((v) => !v)
+            }}
             aria-label={pipIsLocal ? 'Show your video full screen' : 'Show partner video full screen'}
             className="absolute bottom-28 right-4 z-10 h-40 w-28 cursor-grab overflow-hidden rounded-2xl border-2 border-white/30 shadow-glow active:cursor-grabbing md:h-52 md:w-36"
           >
