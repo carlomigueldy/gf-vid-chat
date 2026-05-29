@@ -1,11 +1,21 @@
-import { motion } from 'framer-motion'
-import { Heart } from 'lucide-react'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { PageContainer } from '@/components/layout/page-container'
 import { CreateRoom } from '@/components/room/create-room'
 import { JoinRoom } from '@/components/room/join-room'
-import { pageVariants, staggerContainer, cardEntrance } from '@/lib/animations'
+import { SegmentedControl, type SegmentedOption } from '@/components/ui/segmented-control'
+import { pageVariants, panelSwap } from '@/lib/animations'
+
+type Mode = 'start' | 'join'
+
+const MODE_OPTIONS: SegmentedOption<Mode>[] = [
+  { value: 'start', label: 'Start a room' },
+  { value: 'join', label: 'Join a room' },
+]
 
 export default function HomePage() {
+  const [mode, setMode] = useState<Mode>('start')
+
   return (
     <motion.div
       variants={pageVariants}
@@ -14,38 +24,33 @@ export default function HomePage() {
       exit="exit"
       className="flex-1 bg-warm-gradient"
     >
-      <PageContainer>
+      <PageContainer className="max-w-md">
         <main>
-          <motion.section
-            className="text-center mb-8 md:mb-10"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } }}
-          >
-            <h1 className="inline-flex items-center gap-2 text-4xl font-bold tracking-tight text-[var(--foreground)]">
-              gf&#8209;vid&#8209;chat
-              <Heart
-                className="size-7 fill-[var(--primary)] text-[var(--primary)]"
-                aria-hidden="true"
-              />
+          <section className="text-center mb-7 mt-2 md:mt-6">
+            <h1 className="font-display font-semibold tracking-tight text-[var(--foreground)] text-[clamp(1.9rem,7vw,2.75rem)] leading-[1.05]">
+              Stay close,
+              <br />
+              even asleep. <span aria-hidden="true">💗</span>
             </h1>
-            <p className="text-lg text-[var(--muted-foreground)] mt-2">
-              Stay connected while you sleep. No accounts, no servers, just you two.
+            <p className="mt-3 text-[var(--muted-foreground)] text-balance">
+              No accounts. No servers. Just you two — and a connection that mends itself all night.
             </p>
-          </motion.section>
+          </section>
 
-          <motion.div
-            variants={staggerContainer}
-            initial="initial"
-            animate="animate"
-            className="grid grid-cols-1 sm:grid-cols-2 gap-6"
-          >
-            <motion.div variants={cardEntrance} className="h-full">
-              <CreateRoom />
+          <SegmentedControl
+            options={MODE_OPTIONS}
+            value={mode}
+            onChange={setMode}
+            ariaLabel="Start or join a room"
+            layoutId="home-mode-thumb"
+            className="mb-5"
+          />
+
+          <AnimatePresence>
+            <motion.div key={mode} variants={panelSwap} initial="initial" animate="animate" exit="exit">
+              {mode === 'start' ? <CreateRoom /> : <JoinRoom />}
             </motion.div>
-            <motion.div variants={cardEntrance} className="h-full">
-              <JoinRoom />
-            </motion.div>
-          </motion.div>
+          </AnimatePresence>
         </main>
       </PageContainer>
     </motion.div>
