@@ -26,7 +26,7 @@ describe('CreateRoom', () => {
 
   it('renders the timeout slider with accessible label', () => {
     renderCreateRoom()
-    expect(screen.getByRole('slider', { name: 'Auto-reconnect timeout' })).toBeInTheDocument()
+    expect(screen.getByRole('slider', { name: /auto-reconnect for/i })).toBeInTheDocument()
   })
 
   it('shows range labels for 5 min and 2 hr', () => {
@@ -55,7 +55,7 @@ describe('CreateRoom', () => {
 
   it('updates displayed timeout when slider changes', () => {
     renderCreateRoom()
-    const slider = screen.getByRole('slider', { name: 'Auto-reconnect timeout' })
+    const slider = screen.getByRole('slider', { name: /auto-reconnect for/i })
     fireEvent.change(slider, { target: { value: '600000' } })
     expect(screen.getAllByText('10 min').length).toBeGreaterThan(0)
   })

@@ -53,7 +53,6 @@ export function CreateRoom() {
           step={STEP_MS}
           value={timeoutMs}
           onChange={(e) => setTimeoutMs(Number(e.target.value))}
-          aria-label="Auto-reconnect timeout"
           aria-valuetext={displayValue}
           style={{ background: `linear-gradient(to right, var(--primary) ${pct}%, var(--secondary) ${pct}%)` }}
           className="w-full h-2.5 appearance-none rounded-full cursor-pointer
