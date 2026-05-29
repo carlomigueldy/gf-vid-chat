@@ -50,4 +50,13 @@ describe('SegmentedControl', () => {
     fireEvent.keyDown(selected, { key: 'ArrowLeft' })
     expect(onChange).toHaveBeenCalledWith('c') // wraps to last
   })
+
+  it('moves selection with ArrowDown / ArrowUp', () => {
+    const { onChange } = setup('a')
+    const selected = screen.getByRole('radio', { name: 'Alpha' })
+    fireEvent.keyDown(selected, { key: 'ArrowDown' })
+    expect(onChange).toHaveBeenCalledWith('b')
+    fireEvent.keyDown(selected, { key: 'ArrowUp' })
+    expect(onChange).toHaveBeenCalledWith('c') // wraps to last
+  })
 })
