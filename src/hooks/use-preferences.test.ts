@@ -32,4 +32,10 @@ describe('usePreferences', () => {
     expect(result.current.defaultTimeoutMs).toBe(1_800_000)
     expect(result.current.mirrorVideo).toBe(false)
   })
+
+  it('falls back to default when localStorage contains an invalid number', () => {
+    localStorage.setItem('gfvc-default-timeout', 'NaN')
+    const { result } = renderHook(() => usePreferences())
+    expect(result.current.defaultTimeoutMs).toBe(3_600_000)
+  })
 })

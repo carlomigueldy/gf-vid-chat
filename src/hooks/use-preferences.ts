@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react'
 const TIMEOUT_KEY = 'gfvc-default-timeout'
 const MIRROR_KEY = 'gfvc-mirror-video'
 const DEFAULT_TIMEOUT_MS = 3_600_000
+const DEFAULT_MIRROR_VIDEO = true
 
 function readNumber(key: string, fallback: number): number {
   try {
@@ -28,7 +29,7 @@ export function usePreferences() {
   const [defaultTimeoutMs, setTimeoutState] = useState(() =>
     readNumber(TIMEOUT_KEY, DEFAULT_TIMEOUT_MS)
   )
-  const [mirrorVideo, setMirrorState] = useState(() => readBool(MIRROR_KEY, true))
+  const [mirrorVideo, setMirrorState] = useState(() => readBool(MIRROR_KEY, DEFAULT_MIRROR_VIDEO))
 
   const setDefaultTimeoutMs = useCallback((ms: number) => {
     setTimeoutState(ms)

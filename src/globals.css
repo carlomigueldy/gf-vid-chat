@@ -10,7 +10,7 @@
 /* ============================================================
    Design Direction: Soft + Warm (Design B)
    Primary: Rose/pink oklch(0.65 0.18 12)
-   Radius: 0.75rem
+   Radius: 0.875rem
    Shadows: warm-tinted (not pure black)
    ============================================================ */
 
@@ -155,7 +155,7 @@
 }
 .animate-breathe { animation: breathe 2.4s ease-in-out infinite; }
 
-/* QR viewfinder scan line */
+/* QR viewfinder scan line — element must be position:absolute inside a relative container */
 @keyframes scanline {
   0%   { top: 10%; }
   50%  { top: 86%; }
