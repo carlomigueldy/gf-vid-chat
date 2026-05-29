@@ -85,11 +85,11 @@ export function QrScanner({ onResult, onError }: QrScannerProps) {
 
         {state === 'scanning' && (
           <>
-            <div className="pointer-events-none absolute top-3 left-3 size-7 rounded-tl-lg border-l-[3px] border-t-[3px] border-[var(--primary)]" />
-            <div className="pointer-events-none absolute top-3 right-3 size-7 rounded-tr-lg border-r-[3px] border-t-[3px] border-[var(--primary)]" />
-            <div className="pointer-events-none absolute bottom-3 left-3 size-7 rounded-bl-lg border-b-[3px] border-l-[3px] border-[var(--primary)]" />
-            <div className="pointer-events-none absolute bottom-3 right-3 size-7 rounded-br-lg border-b-[3px] border-r-[3px] border-[var(--primary)]" />
-            <div className="animate-scanline pointer-events-none absolute left-4 right-4 h-0.5 rounded-full bg-[var(--primary)]/70 shadow-[0_0_8px_var(--glow-primary)]" />
+            <div aria-hidden="true" className="pointer-events-none absolute top-3 left-3 size-7 rounded-tl-lg border-l-[3px] border-t-[3px] border-[var(--primary)]" />
+            <div aria-hidden="true" className="pointer-events-none absolute top-3 right-3 size-7 rounded-tr-lg border-r-[3px] border-t-[3px] border-[var(--primary)]" />
+            <div aria-hidden="true" className="pointer-events-none absolute bottom-3 left-3 size-7 rounded-bl-lg border-b-[3px] border-l-[3px] border-[var(--primary)]" />
+            <div aria-hidden="true" className="pointer-events-none absolute bottom-3 right-3 size-7 rounded-br-lg border-b-[3px] border-r-[3px] border-[var(--primary)]" />
+            <div aria-hidden="true" className="animate-scanline pointer-events-none absolute left-4 right-4 h-0.5 rounded-full bg-[var(--primary)]/70 shadow-[0_0_8px_var(--glow-primary)]" />
           </>
         )}
       </div>

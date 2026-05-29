@@ -12,7 +12,7 @@ interface QrDisplayProps {
 
 // Small rose heart, inlined as a data URI for the QR center mark.
 const HEART_MARK =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e0457b'%3E%3Cpath d='M12 21s-8-4.6-8-10a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 11c0 5.4-8 10-8 10z'/%3E%3C/svg%3E"
+  "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='%23e0457b'%3E%3Cpath%20d='M12%2021s-8-4.6-8-10a4.5%204.5%200%200%201%208-2.8A4.5%204.5%200%200%201%2020%2011c0%205.4-8%2010-8%2010z'/%3E%3C/svg%3E"
 
 export function QrDisplay({ url, size = 220 }: QrDisplayProps) {
   const [copied, setCopied] = useState(false)
