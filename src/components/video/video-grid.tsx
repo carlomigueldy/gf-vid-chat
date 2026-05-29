@@ -27,10 +27,12 @@ export function VideoGrid({ localStream, remoteStream, roomUrl, connectionState 
   const pipIsLocal = !isLocalMain
 
   return (
-    <div ref={containerRef} role="main" aria-label="Video call" className="relative h-full w-full overflow-hidden">
-      <p aria-live="polite" className="sr-only">
-        {isWaiting ? 'Partner has not joined yet' : `Call status: ${connectionState}`}
-      </p>
+    <div ref={containerRef} className="relative h-full w-full overflow-hidden">
+      {isWaiting && (
+        <p aria-live="polite" className="sr-only">
+          Partner has not joined yet
+        </p>
+      )}
 
       {isWaiting ? (
         <div className="flex min-h-[100dvh] flex-col items-center justify-center gap-6 bg-[var(--background)] bg-warm-gradient px-4">
