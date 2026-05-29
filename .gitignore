@@ -88,3 +88,6 @@ id_rsa*
 id_ed25519*
 *.gpg
 *.asc
+
+# Superpowers brainstorm artifacts
+.superpowers/
