@@ -34,7 +34,10 @@
   --border: oklch(0.92 0.01 30);
   --input: oklch(0.92 0.01 30);
   --ring: oklch(0.65 0.18 12);
-  --radius: 0.75rem;
+  --radius: 0.875rem;
+
+  --primary-gradient: linear-gradient(135deg, oklch(0.70 0.17 12), oklch(0.62 0.21 8));
+  --glow-primary: oklch(0.62 0.20 10 / 0.45);
 
   /* Warm-tinted shadow tokens */
   --shadow-color: oklch(0.18 0.04 12 / 0.10);
@@ -62,6 +65,8 @@
   --border: oklch(0.28 0.012 30);
   --input: oklch(0.28 0.012 30);
   --ring: oklch(0.72 0.16 12);
+  --primary-gradient: linear-gradient(135deg, oklch(0.76 0.15 14), oklch(0.68 0.18 8));
+  --glow-primary: oklch(0.72 0.16 12 / 0.42);
 
   --shadow-color: oklch(0.08 0.03 12 / 0.30);
   --shadow-color-md: oklch(0.08 0.03 12 / 0.40);
@@ -85,7 +90,7 @@
 .bg-warm-gradient {
   background-image: radial-gradient(
     ellipse 80% 50% at 50% -5%,
-    oklch(0.93 0.04 12 / 0.40),
+    oklch(0.93 0.04 12 / 0.55),
     transparent
   );
 }
@@ -131,3 +136,29 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ----------------------------------------------------------
+   Elevated "Soft & Rounded" utilities
+   ---------------------------------------------------------- */
+.font-display { font-family: var(--font-display); }
+
+.bg-primary-gradient { background-image: var(--primary-gradient); }
+
+.shadow-glow {
+  box-shadow: 0 12px 30px -8px var(--glow-primary), 0 2px 8px var(--shadow-color);
+}
+
+/* Breathing pulse — used by waiting + reconnect states */
+@keyframes breathe {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.55; transform: scale(0.97); }
+}
+.animate-breathe { animation: breathe 2.4s ease-in-out infinite; }
+
+/* QR viewfinder scan line */
+@keyframes scanline {
+  0%   { top: 10%; }
+  50%  { top: 86%; }
+  100% { top: 10%; }
+}
+.animate-scanline { animation: scanline 2.4s ease-in-out infinite; }
