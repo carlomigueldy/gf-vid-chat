@@ -10,9 +10,12 @@ interface QrDisplayProps {
   size?: number
 }
 
+// Small rose heart, inlined as a data URI for the QR center mark.
+const HEART_MARK =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e0457b'%3E%3Cpath d='M12 21s-8-4.6-8-10a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 11c0 5.4-8 10-8 10z'/%3E%3C/svg%3E"
+
 export function QrDisplay({ url, size = 220 }: QrDisplayProps) {
   const [copied, setCopied] = useState(false)
-
   const truncatedUrl = url.length > 40 ? `${url.slice(0, 40)}…` : url
 
   async function handleCopy() {
@@ -26,47 +29,37 @@ export function QrDisplay({ url, size = 220 }: QrDisplayProps) {
   }
 
   return (
-    <figure
-      aria-label="QR code to join room"
-      className="flex flex-col items-center gap-3 p-6"
-    >
+    <figure aria-label="QR code to join room" className="flex flex-col items-center gap-3 p-6">
       <motion.div
         variants={qrReveal}
         initial="initial"
         animate="animate"
-        className="bg-white p-3 rounded-xl shadow-sm"
+        className="rounded-3xl bg-white p-4 shadow-glow"
       >
-        <QRCodeSVG value={url} size={size} />
+        <QRCodeSVG
+          value={url}
+          size={size}
+          level="H"
+          imageSettings={{ src: HEART_MARK, height: 34, width: 34, excavate: true }}
+        />
       </motion.div>
 
-      <figcaption className="sr-only">
-        Scan to join or share the link below
-      </figcaption>
+      <figcaption className="sr-only">Scan to join or share the link below</figcaption>
 
-      <p className="text-sm font-medium text-[var(--muted-foreground)]">
-        Scan to join
-      </p>
+      <p className="font-display text-sm font-semibold text-[var(--foreground)]">Scan to join</p>
 
-      <p className="text-xs font-mono text-[var(--muted-foreground)] break-all text-center max-w-[260px]">
+      <p className="max-w-[260px] break-all text-center font-mono text-xs text-[var(--muted-foreground)]">
         {truncatedUrl}
       </p>
 
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={handleCopy}
-        aria-label="Copy join link"
-        className="gap-1.5"
-      >
+      <Button variant="ghost" size="sm" onClick={handleCopy} aria-label="Copy join link" className="gap-1.5">
         {copied ? (
           <>
-            <Check className="size-3" />
-            Copied!
+            <Check className="size-3" /> Copied!
           </>
         ) : (
           <>
-            <Copy className="size-3" />
-            Copy link
+            <Copy className="size-3" /> Copy link
           </>
         )}
       </Button>
