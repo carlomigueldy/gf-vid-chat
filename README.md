@@ -111,7 +111,12 @@ On each retry the previous `Peer` and `MediaConnection` are fully torn down befo
 
 ### STUN / TURN
 
-Default config uses Google's public STUN servers. No TURN — if both peers are behind symmetric NAT the call may fail. Override `DEFAULT_PEER_CONFIG` in `src/lib/peer-config.ts` to add a TURN server (e.g. Cloudflare, Twilio, self-hosted coturn).
+Calls use Google's public **STUN** servers by default. If both peers are behind symmetric NAT or a restrictive firewall, a direct/STUN path can fail — add a **TURN** relay to fall back to. Two ways, no backend or code change needed:
+
+- **In the app:** Settings → **Connectivity** → enter your TURN URL + username + password. Stored locally in the browser, applied on the next (re)connect.
+- **At build/deploy:** set `VITE_TURN_URLS` (comma-separated), `VITE_TURN_USERNAME`, `VITE_TURN_CREDENTIAL` (e.g. in Vercel project env). See `.env.example`.
+
+Get free TURN credentials from Cloudflare TURN, metered.ca, or self-host [coturn](https://github.com/coturn/coturn). TURN is never committed to the repo.
 
 ## Project Structure
 
