@@ -21,10 +21,17 @@ A pure client-side video chat designed for one specific use case: staying connec
 
 - QR-code room joining: scan with camera, upload a screenshot, or paste a link.
 - Auto-reconnect state machine with exponential backoff and full peer cleanup per retry.
+- **Screen stays awake during calls** so the connection doesn't drop when the phone auto-locks (toggle in Settings → Defaults).
+- **Installable PWA** — add to home screen for a full-screen, app-like experience.
 - Light / dark / system theme with persistent preference.
-- Mic / camera toggles, hang up, fullscreen.
-- Mobile-friendly layout (full-screen remote video, picture-in-picture local).
+- Mic / camera toggles, draggable tap-to-swap picture-in-picture, hang up, fullscreen.
+- Phone-first responsive UI with a calm rose "Soft & Rounded" design and safe-area-aware controls.
+- Calm reconnect: a gentle breathing overlay instead of a jarring error — built for a sleeping user.
 - 100% client-side — no analytics, no telemetry, no data leaves the two browsers.
+
+### Install on your phone
+
+Open the site on your phone and choose **Add to Home Screen** (Share menu on iOS Safari, the install prompt or browser menu on Android Chrome). It launches full-screen with no browser chrome — ideal for a bedside device.
 
 ## Screenshots
 
@@ -207,7 +214,7 @@ This project follows a strict worktree + PR workflow (see `CLAUDE.md`):
 
 ## Status
 
-v1 shipped — see merged PRs #1–#4. Active development continues on small features and polish.
+v1 shipped, followed by a "Soft & Rounded" design refresh and polish pass (PRs #6–#9): an elevated rose UI, segmented-hero home, glass-dock call with a calm breathing reconnect, screen wake lock during calls, and installable-PWA support. Active development continues on small features and polish.
 
 ## Acknowledgements
 
