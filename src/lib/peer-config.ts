@@ -68,7 +68,7 @@ export function buildIceServers(
   })
 }
 
-function readCustomTurn(): TurnConfig | null {
+export function readCustomTurn(): TurnConfig | null {
   try {
     const raw = localStorage.getItem(TURN_STORAGE_KEY)
     if (!raw) return null

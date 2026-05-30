@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { TIMEOUT_DEFAULT_MS } from '@/lib/timeout'
-import { TURN_STORAGE_KEY } from '@/lib/peer-config'
+import { TURN_STORAGE_KEY, readCustomTurn } from '@/lib/peer-config'
 import type { TurnConfig } from '@/types'
 
 const TIMEOUT_KEY = 'gfvc-default-timeout'
@@ -29,17 +29,6 @@ function readBool(key: string, fallback: boolean): boolean {
   }
 }
 
-function readTurn(): TurnConfig | null {
-  try {
-    const raw = localStorage.getItem(TURN_STORAGE_KEY)
-    if (!raw) return null
-    const parsed = JSON.parse(raw) as TurnConfig
-    return parsed && typeof parsed.urls === 'string' ? parsed : null
-  } catch {
-    return null
-  }
-}
-
 export function usePreferences() {
   const [defaultTimeoutMs, setTimeoutState] = useState(() =>
     readNumber(TIMEOUT_KEY, TIMEOUT_DEFAULT_MS)
@@ -49,7 +38,7 @@ export function usePreferences() {
     readBool(WAKE_LOCK_KEY, DEFAULT_KEEP_SCREEN_AWAKE)
   )
 
-  const [turnServer, setTurnState] = useState<TurnConfig | null>(() => readTurn())
+  const [turnServer, setTurnState] = useState<TurnConfig | null>(() => readCustomTurn())
 
   const setTurnServer = useCallback((cfg: TurnConfig | null) => {
     setTurnState(cfg)

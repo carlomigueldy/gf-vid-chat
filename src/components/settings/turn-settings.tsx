@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { usePreferences } from '@/hooks/use-preferences'
 
 function isValidTurnUrl(url: string): boolean {
-  return /^turns?:/.test(url.trim())
+  return /^turns?:/i.test(url.trim())
 }
 
 const inputClass =
