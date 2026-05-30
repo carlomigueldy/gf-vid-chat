@@ -21,7 +21,7 @@ The app shows connection *state* (connecting/connected/reconnecting) but not con
 
 **UI** (`src/components/video/connection-quality.tsx`): a small glass pill, top-right of the call, with a lucide signal icon colored by quality (green/amber/red) and a "Relay" chip when relayed. Hidden when `quality === 'unknown'`. `aria-label` announces the quality. Wired in `room-page.tsx`, shown only while `connected`.
 
-**Types** (`src/types/index.ts`): `ConnectionQuality = 'good' | 'fair' | 'poor' | 'unknown'`; `ConnectionQualityInfo { quality; isRelayed: boolean; rttMs: number | null }`; `StatsSample { packetsLost; packetsReceived; timestamp }`.
+**Types** (`src/types/index.ts`): `ConnectionQuality = 'good' | 'fair' | 'poor' | 'unknown'`; `ConnectionQualityInfo { quality; isRelayed: boolean; rttMs: number | null }`; `StatsSample { packetsLost; packetsReceived }`.
 
 ## Testing
 - `connection-quality.test.ts`: `assessQuality` thresholds; `summarizeStats` with fake `RTCStatsReport` Maps (good/fair/poor; relayed detection; first-sample `unknown`/no-prev).

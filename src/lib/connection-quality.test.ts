@@ -23,6 +23,15 @@ describe('assessQuality', () => {
   it('treats null rtt as 0', () => {
     expect(assessQuality(null, 0)).toBe('good')
   })
+  it('uses exclusive thresholds at the boundaries', () => {
+    expect(assessQuality(250, 0)).toBe('good')   // 250 is not > 250
+    expect(assessQuality(251, 0)).toBe('fair')
+    expect(assessQuality(500, 0)).toBe('fair')   // 500 is not > 500
+    expect(assessQuality(501, 0)).toBe('poor')
+    expect(assessQuality(0, 0.02)).toBe('good')  // 0.02 is not > 0.02
+    expect(assessQuality(0, 0.05)).toBe('fair')  // 0.05 is not > 0.05
+    expect(assessQuality(0, 0.051)).toBe('poor')
+  })
 })
 
 describe('summarizeStats', () => {
