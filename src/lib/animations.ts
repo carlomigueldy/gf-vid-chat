@@ -6,15 +6,6 @@ export const pageVariants: Variants = {
   exit:    { opacity: 0, y: -8, transition: { duration: 0.15, ease: 'easeIn' } },
 }
 
-export const staggerContainer: Variants = {
-  animate: { transition: { staggerChildren: 0.08 } },
-}
-
-export const cardEntrance: Variants = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } },
-}
-
 export const qrReveal: Variants = {
   initial: { opacity: 0, scale: 0.85 },
   animate: {
