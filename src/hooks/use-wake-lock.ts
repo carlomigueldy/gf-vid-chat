@@ -14,8 +14,17 @@ export function useWakeLock(active: boolean) {
     if (!('wakeLock' in navigator)) return
 
     let cancelled = false
+    let acquiring = false
+
+    function handleRelease() {
+      sentinelRef.current = null
+    }
 
     async function acquire() {
+      // Guard against duplicate locks: an in-flight request or an existing
+      // sentinel means we don't need another.
+      if (acquiring || sentinelRef.current) return
+      acquiring = true
       try {
         const sentinel = await navigator.wakeLock.request('screen')
         if (cancelled) {
@@ -23,16 +32,16 @@ export function useWakeLock(active: boolean) {
           return
         }
         sentinelRef.current = sentinel
-        sentinel.addEventListener('release', () => {
-          sentinelRef.current = null
-        })
+        sentinel.addEventListener('release', handleRelease)
       } catch {
         // request denied (not visible, low battery, etc.) — ignore
+      } finally {
+        acquiring = false
       }
     }
 
     function handleVisibilityChange() {
-      if (document.visibilityState === 'visible' && sentinelRef.current === null) {
+      if (document.visibilityState === 'visible') {
         void acquire()
       }
     }
@@ -45,7 +54,10 @@ export function useWakeLock(active: boolean) {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
       const sentinel = sentinelRef.current
       sentinelRef.current = null
-      if (sentinel) void sentinel.release().catch(() => {})
+      if (sentinel) {
+        sentinel.removeEventListener('release', handleRelease)
+        void sentinel.release().catch(() => {})
+      }
     }
   }, [active])
 }

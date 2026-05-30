@@ -4,16 +4,19 @@ import { useWakeLock } from './use-wake-lock'
 
 function installWakeLock() {
   const release = vi.fn().mockResolvedValue(undefined)
+  let releaseHandler: (() => void) | null = null
   const sentinel = {
     release,
-    addEventListener: vi.fn(),
+    addEventListener: vi.fn((event: string, cb: () => void) => {
+      if (event === 'release') releaseHandler = cb
+    }),
     removeEventListener: vi.fn(),
     released: false,
     type: 'screen' as const,
   }
   const request = vi.fn().mockResolvedValue(sentinel)
   Object.defineProperty(navigator, 'wakeLock', { value: { request }, configurable: true })
-  return { request, release, sentinel }
+  return { request, release, sentinel, fireRelease: () => releaseHandler?.() }
 }
 
 afterEach(() => {
@@ -65,5 +68,22 @@ describe('useWakeLock', () => {
     // @ts-expect-error ensure unsupported
     delete navigator.wakeLock
     expect(() => renderHook(() => useWakeLock(true))).not.toThrow()
+  })
+
+  it('re-acquires the lock when the page becomes visible again', async () => {
+    const { request, fireRelease } = installWakeLock()
+    renderHook(() => useWakeLock(true))
+    await act(async () => {}) // initial acquire resolves, sentinel stored
+    expect(request).toHaveBeenCalledTimes(1)
+    // browser auto-releases the lock when the page is hidden
+    await act(async () => {
+      fireRelease()
+    })
+    // page returns to the foreground
+    Object.defineProperty(document, 'visibilityState', { value: 'visible', configurable: true })
+    await act(async () => {
+      document.dispatchEvent(new Event('visibilitychange'))
+    })
+    expect(request).toHaveBeenCalledTimes(2)
   })
 })

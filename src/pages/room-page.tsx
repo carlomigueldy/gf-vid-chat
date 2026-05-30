@@ -52,7 +52,14 @@ export default function RoomPage() {
   })
 
   const { keepScreenAwake } = usePreferences()
-  useWakeLock(keepScreenAwake && !mediaError && connectionState !== 'timeout')
+  // Keep the screen on while the call is live or recovering; release on the
+  // terminal states (camera error, timeout, unrecoverable failure).
+  useWakeLock(
+    keepScreenAwake &&
+      !mediaError &&
+      connectionState !== 'timeout' &&
+      connectionState !== 'failed'
+  )
 
   const handleToggleFullscreen = useCallback(async () => {
     try {
