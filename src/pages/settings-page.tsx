@@ -11,6 +11,7 @@ import { formatDuration } from '@/lib/format'
 import { pageVariants } from '@/lib/animations'
 import { TIMEOUT_MIN_MS, TIMEOUT_MAX_MS, TIMEOUT_STEP_MS } from '@/lib/timeout'
 import type { Theme } from '@/types'
+import { TurnSettings } from '@/components/settings/turn-settings'
 
 const THEME_OPTIONS: SegmentedOption<Theme>[] = [
   { value: 'light', label: 'Light', Icon: Sun },
@@ -70,6 +71,8 @@ export default function SettingsPage() {
               />
             </div>
           </Card>
+
+          <TurnSettings />
 
           <Card className="space-y-1 p-6">
             <h2 className="mb-2 text-sm font-medium uppercase tracking-wide text-[var(--muted-foreground)]">About</h2>

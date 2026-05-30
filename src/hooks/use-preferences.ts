@@ -1,5 +1,7 @@
 import { useCallback, useState } from 'react'
 import { TIMEOUT_DEFAULT_MS } from '@/lib/timeout'
+import { TURN_STORAGE_KEY, readCustomTurn } from '@/lib/peer-config'
+import type { TurnConfig } from '@/types'
 
 const TIMEOUT_KEY = 'gfvc-default-timeout'
 const MIRROR_KEY = 'gfvc-mirror-video'
@@ -36,6 +38,18 @@ export function usePreferences() {
     readBool(WAKE_LOCK_KEY, DEFAULT_KEEP_SCREEN_AWAKE)
   )
 
+  const [turnServer, setTurnState] = useState<TurnConfig | null>(() => readCustomTurn())
+
+  const setTurnServer = useCallback((cfg: TurnConfig | null) => {
+    setTurnState(cfg)
+    try {
+      if (cfg) localStorage.setItem(TURN_STORAGE_KEY, JSON.stringify(cfg))
+      else localStorage.removeItem(TURN_STORAGE_KEY)
+    } catch {
+      // storage unavailable — keep in-memory value
+    }
+  }, [])
+
   const setDefaultTimeoutMs = useCallback((ms: number) => {
     setTimeoutState(ms)
     try {
@@ -63,5 +77,5 @@ export function usePreferences() {
     }
   }, [])
 
-  return { defaultTimeoutMs, setDefaultTimeoutMs, mirrorVideo, setMirrorVideo, keepScreenAwake, setKeepScreenAwake }
+  return { defaultTimeoutMs, setDefaultTimeoutMs, mirrorVideo, setMirrorVideo, keepScreenAwake, setKeepScreenAwake, turnServer, setTurnServer }
 }

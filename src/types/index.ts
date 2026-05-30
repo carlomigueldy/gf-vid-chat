@@ -16,3 +16,9 @@ export interface RoomConfig {
 }
 
 export type Theme = 'light' | 'dark' | 'system'
+
+export interface TurnConfig {
+  urls: string
+  username?: string
+  credential?: string
+}
