@@ -22,3 +22,16 @@ export interface TurnConfig {
   username?: string
   credential?: string
 }
+
+export type ConnectionQuality = 'good' | 'fair' | 'poor' | 'unknown'
+
+export interface ConnectionQualityInfo {
+  quality: ConnectionQuality
+  isRelayed: boolean
+  rttMs: number | null
+}
+
+export interface StatsSample {
+  packetsLost: number
+  packetsReceived: number
+}
