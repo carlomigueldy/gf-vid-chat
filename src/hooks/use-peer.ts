@@ -3,7 +3,7 @@ import type { MediaConnection } from 'peerjs'
 import { useCallback, useEffect, useReducer, useRef } from 'react'
 import {
   BACKOFF_MULTIPLIER,
-  DEFAULT_PEER_CONFIG,
+  buildPeerConfig,
   INITIAL_BACKOFF_MS,
   MAX_BACKOFF_MS,
   PEER_ID_PREFIX,
@@ -210,9 +210,10 @@ export function usePeer({
     dispatch({ type: 'CONNECTING' })
 
     const peerId = role === 'creator' ? `${PEER_ID_PREFIX}${roomId}` : undefined
+    const peerConfig = buildPeerConfig()
     const peer = peerId
-      ? new Peer(peerId, DEFAULT_PEER_CONFIG)
-      : new Peer(DEFAULT_PEER_CONFIG)
+      ? new Peer(peerId, peerConfig)
+      : new Peer(peerConfig)
     peerRef.current = peer
 
     // ---- creator: listen for incoming calls ----
