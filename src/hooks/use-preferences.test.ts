@@ -38,4 +38,12 @@ describe('usePreferences', () => {
     const { result } = renderHook(() => usePreferences())
     expect(result.current.defaultTimeoutMs).toBe(3_600_000)
   })
+
+  it('defaults keepScreenAwake to true and persists changes', () => {
+    const { result } = renderHook(() => usePreferences())
+    expect(result.current.keepScreenAwake).toBe(true)
+    act(() => result.current.setKeepScreenAwake(false))
+    expect(result.current.keepScreenAwake).toBe(false)
+    expect(localStorage.getItem('gfvc-keep-screen-awake')).toBe('false')
+  })
 })

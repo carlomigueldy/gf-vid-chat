@@ -49,6 +49,15 @@ describe('SettingsPage', () => {
     expect(localStorage.getItem('gfvc-mirror-video')).toBe('false')
   })
 
+  it('toggles the keep-screen-awake switch and persists it', () => {
+    renderSettings()
+    const sw = screen.getByRole('switch', { name: /keep screen awake/i })
+    expect(sw).toHaveAttribute('aria-checked', 'true')
+    fireEvent.click(sw)
+    expect(sw).toHaveAttribute('aria-checked', 'false')
+    expect(localStorage.getItem('gfvc-keep-screen-awake')).toBe('false')
+  })
+
   it('renders the About section with a GitHub link', () => {
     renderSettings()
     expect(screen.getByText(/version/i)).toBeInTheDocument()
