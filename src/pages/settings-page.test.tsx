@@ -63,4 +63,10 @@ describe('SettingsPage', () => {
     expect(screen.getByText(/version/i)).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /view source on github/i })).toBeInTheDocument()
   })
+
+  it('renders the Connectivity TURN section', () => {
+    renderSettings()
+    expect(screen.getByLabelText('TURN URL')).toBeInTheDocument()
+    expect(screen.getByText(/no relay/i)).toBeInTheDocument()
+  })
 })
