@@ -12,7 +12,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "type-check": "tsc -b --noEmit"
+    "type-check": "tsc -b --noEmit",
+    "gen:icons": "node scripts/generate-icons.mjs"
   },
   "dependencies": {
     "@fontsource-variable/fredoka": "^5.2.10",

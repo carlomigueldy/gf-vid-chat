@@ -18,7 +18,7 @@ async function tile({ name, size, radius, glyphScale, transparent = false }) {
     .tile img{width:${Math.round(size * glyphScale)}px;height:auto}
   </style></head><body><div class="tile"><img src="${glyph}"/></div></body></html>`)
   await page.waitForTimeout(150)
-  const el = await page.$('.tile')
+  const el = await page.waitForSelector('.tile')
   await el.screenshot({ path: resolve(PUBLIC, name), omitBackground: transparent })
   await page.close()
   console.log('  →', name)
