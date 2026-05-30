@@ -136,7 +136,7 @@ export default function RoomPage() {
   const roomUrl = buildRoomUrl(roomId ?? '')
 
   return (
-    <main role="main" aria-label="Video call room" className="relative h-[100dvh] w-full overflow-hidden bg-[var(--background)]">
+    <main role="main" aria-label="Video call room" className="relative h-[100dvh] w-full overflow-hidden bg-black">
       <h1 className="sr-only">Active video call with {roomId}</h1>
 
       <VideoGrid

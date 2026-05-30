@@ -11,6 +11,7 @@ interface VideoPlayerProps {
   className?: string
   label?: string
   objectFit?: 'cover' | 'contain'
+  videoClassName?: string
 }
 
 export function VideoPlayer({
@@ -20,6 +21,7 @@ export function VideoPlayer({
   className,
   label,
   objectFit = 'cover',
+  videoClassName,
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
 
@@ -47,7 +49,8 @@ export function VideoPlayer({
             animate="animate"
             className={cn(
               'w-full h-full',
-              objectFit === 'cover' ? 'object-cover' : 'object-contain'
+              objectFit === 'cover' ? 'object-cover' : 'object-contain',
+              videoClassName
             )}
             style={mirror ? { transform: 'scaleX(-1)' } : undefined}
             aria-label={label}
