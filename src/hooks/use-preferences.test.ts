@@ -46,4 +46,21 @@ describe('usePreferences', () => {
     expect(result.current.keepScreenAwake).toBe(false)
     expect(localStorage.getItem('gfvc-keep-screen-awake')).toBe('false')
   })
+
+  it('defaults turnServer to null, persists it, and clears it', () => {
+    const { result } = renderHook(() => usePreferences())
+    expect(result.current.turnServer).toBeNull()
+    act(() => result.current.setTurnServer({ urls: 'turn:x:3478', username: 'u', credential: 'p' }))
+    expect(result.current.turnServer).toEqual({ urls: 'turn:x:3478', username: 'u', credential: 'p' })
+    expect(JSON.parse(localStorage.getItem('gfvc-turn')!)).toEqual({ urls: 'turn:x:3478', username: 'u', credential: 'p' })
+    act(() => result.current.setTurnServer(null))
+    expect(result.current.turnServer).toBeNull()
+    expect(localStorage.getItem('gfvc-turn')).toBeNull()
+  })
+
+  it('reads an existing turn config from localStorage', () => {
+    localStorage.setItem('gfvc-turn', JSON.stringify({ urls: 'turn:y:3478' }))
+    const { result } = renderHook(() => usePreferences())
+    expect(result.current.turnServer).toEqual({ urls: 'turn:y:3478' })
+  })
 })
