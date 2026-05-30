@@ -19,6 +19,7 @@ export function useConnectionQuality(
   useEffect(() => {
     if (!active) {
       prevSampleRef.current = null
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setInfo(UNKNOWN)
       return
     }
