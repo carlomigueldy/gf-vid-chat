@@ -6,8 +6,10 @@ import { useMediaStream } from '@/hooks/use-media-stream'
 import { usePeer } from '@/hooks/use-peer'
 import { usePreferences } from '@/hooks/use-preferences'
 import { useWakeLock } from '@/hooks/use-wake-lock'
+import { useConnectionQuality } from '@/hooks/use-connection-quality'
 import { VideoGrid } from '@/components/video/video-grid'
 import { ConnectionStatus } from '@/components/video/connection-status'
+import { ConnectionQuality } from '@/components/video/connection-quality'
 import { ReconnectOverlay } from '@/components/video/reconnect-overlay'
 import { RoomControls } from '@/components/room/room-controls'
 import { Card } from '@/components/ui/card'
@@ -44,12 +46,14 @@ export default function RoomPage() {
     toggleVideo,
   } = useMediaStream()
 
-  const { remoteStream, connectionState, retryCount, timeRemainingMs, disconnect } = usePeer({
+  const { remoteStream, connectionState, retryCount, timeRemainingMs, disconnect, getPeerConnection } = usePeer({
     roomId: roomId ?? '',
     role,
     localStream,
     retryTimeoutMs,
   })
+
+  const quality = useConnectionQuality(getPeerConnection, connectionState === 'connected')
 
   const { keepScreenAwake } = usePreferences()
   // Keep the screen on while the call is live or recovering; release on the
@@ -143,6 +147,8 @@ export default function RoomPage() {
       />
 
       <ConnectionStatus state={connectionState} retryCount={retryCount} timeRemainingMs={timeRemainingMs} />
+
+      {connectionState === 'connected' && <ConnectionQuality info={quality} />}
 
       <AnimatePresence>
         {connectionState === 'reconnecting' && <ReconnectOverlay key="reconnect" retryCount={retryCount} />}
