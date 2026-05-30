@@ -42,14 +42,19 @@ export function VideoGrid({ localStream, remoteStream, roomUrl, connectionState 
         </div>
       ) : (
         <>
-          <VideoPlayer
-            stream={mainStream}
-            muted={isLocalMain}
-            mirror={isLocalMain && mirrorVideo}
-            label={isLocalMain ? 'Your video' : 'Partner video'}
-            objectFit="cover"
-            className="absolute inset-0 h-full w-full rounded-none"
-          />
+          <div className="call-stage-bg absolute inset-0 flex items-center justify-center lg:p-8">
+            <div className="relative h-full w-full overflow-hidden lg:h-auto lg:aspect-video lg:max-h-[86vh] lg:w-full lg:max-w-[1180px] lg:rounded-3xl lg:border lg:border-white/10 lg:shadow-glow">
+              <VideoPlayer
+                stream={mainStream}
+                muted={isLocalMain}
+                mirror={isLocalMain && mirrorVideo}
+                label={isLocalMain ? 'Your video' : 'Partner video'}
+                objectFit="cover"
+                videoClassName="lg:object-contain"
+                className="absolute inset-0 h-full w-full rounded-none bg-transparent"
+              />
+            </div>
+          </div>
 
           <div className="pointer-events-none absolute inset-0 bg-black/10" aria-hidden="true" />
 
