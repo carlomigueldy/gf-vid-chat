@@ -162,3 +162,20 @@
   100% { top: 10%; }
 }
 .animate-scanline { animation: scanline 2.4s ease-in-out infinite; }
+
+/* ----------------------------------------------------------
+   Active-call theater backdrop — solid dark on mobile; a dark
+   warm radial depth on desktop, where the call is a centered stage.
+   ---------------------------------------------------------- */
+.call-stage-bg {
+  background-color: #000;
+}
+@media (min-width: 1024px) {
+  .call-stage-bg {
+    background: radial-gradient(
+      ellipse 75% 70% at 50% 45%,
+      oklch(0.24 0.04 18),
+      oklch(0.11 0.012 25)
+    );
+  }
+}
