@@ -3,7 +3,9 @@ import { TIMEOUT_DEFAULT_MS } from '@/lib/timeout'
 
 const TIMEOUT_KEY = 'gfvc-default-timeout'
 const MIRROR_KEY = 'gfvc-mirror-video'
+const WAKE_LOCK_KEY = 'gfvc-keep-screen-awake'
 const DEFAULT_MIRROR_VIDEO = true
+const DEFAULT_KEEP_SCREEN_AWAKE = true
 
 function readNumber(key: string, fallback: number): number {
   try {
@@ -30,6 +32,9 @@ export function usePreferences() {
     readNumber(TIMEOUT_KEY, TIMEOUT_DEFAULT_MS)
   )
   const [mirrorVideo, setMirrorState] = useState(() => readBool(MIRROR_KEY, DEFAULT_MIRROR_VIDEO))
+  const [keepScreenAwake, setKeepScreenAwakeState] = useState(() =>
+    readBool(WAKE_LOCK_KEY, DEFAULT_KEEP_SCREEN_AWAKE)
+  )
 
   const setDefaultTimeoutMs = useCallback((ms: number) => {
     setTimeoutState(ms)
@@ -49,5 +54,14 @@ export function usePreferences() {
     }
   }, [])
 
-  return { defaultTimeoutMs, setDefaultTimeoutMs, mirrorVideo, setMirrorVideo }
+  const setKeepScreenAwake = useCallback((on: boolean) => {
+    setKeepScreenAwakeState(on)
+    try {
+      localStorage.setItem(WAKE_LOCK_KEY, String(on))
+    } catch {
+      // storage unavailable — keep in-memory value
+    }
+  }, [])
+
+  return { defaultTimeoutMs, setDefaultTimeoutMs, mirrorVideo, setMirrorVideo, keepScreenAwake, setKeepScreenAwake }
 }

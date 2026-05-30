@@ -20,7 +20,7 @@ const THEME_OPTIONS: SegmentedOption<Theme>[] = [
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme()
-  const { defaultTimeoutMs, setDefaultTimeoutMs, mirrorVideo, setMirrorVideo } = usePreferences()
+  const { defaultTimeoutMs, setDefaultTimeoutMs, mirrorVideo, setMirrorVideo, keepScreenAwake, setKeepScreenAwake } = usePreferences()
 
   return (
     <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" className="flex-1 bg-warm-gradient">
@@ -55,6 +55,19 @@ export default function SettingsPage() {
                 Mirror my video
               </label>
               <Switch id="mirror-toggle" aria-label="Mirror my video" checked={mirrorVideo} onCheckedChange={setMirrorVideo} className="ml-4" />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <label htmlFor="wake-lock-toggle" className="text-sm font-medium text-[var(--foreground)]">
+                Keep screen awake during calls
+              </label>
+              <Switch
+                id="wake-lock-toggle"
+                aria-label="Keep screen awake during calls"
+                checked={keepScreenAwake}
+                onCheckedChange={setKeepScreenAwake}
+                className="ml-4"
+              />
             </div>
           </Card>
 

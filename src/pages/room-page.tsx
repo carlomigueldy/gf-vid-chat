@@ -4,6 +4,8 @@ import { AnimatePresence } from 'framer-motion'
 import { CameraOff, Clock } from 'lucide-react'
 import { useMediaStream } from '@/hooks/use-media-stream'
 import { usePeer } from '@/hooks/use-peer'
+import { usePreferences } from '@/hooks/use-preferences'
+import { useWakeLock } from '@/hooks/use-wake-lock'
 import { VideoGrid } from '@/components/video/video-grid'
 import { ConnectionStatus } from '@/components/video/connection-status'
 import { ReconnectOverlay } from '@/components/video/reconnect-overlay'
@@ -48,6 +50,9 @@ export default function RoomPage() {
     localStream,
     retryTimeoutMs,
   })
+
+  const { keepScreenAwake } = usePreferences()
+  useWakeLock(keepScreenAwake && !mediaError && connectionState !== 'timeout')
 
   const handleToggleFullscreen = useCallback(async () => {
     try {
