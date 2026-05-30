@@ -27,6 +27,7 @@ export interface UsePeerReturn {
   retryCount: number
   timeRemainingMs: number
   disconnect: () => void
+  getPeerConnection: () => RTCPeerConnection | null
 }
 
 // ---------------------------------------------------------------------------
@@ -372,11 +373,16 @@ export function usePeer({
     dispatch({ type: 'FAILED' })
   }, [cleanup])
 
+  const getPeerConnection = useCallback((): RTCPeerConnection | null => {
+    return callRef.current?.peerConnection ?? null
+  }, [])
+
   return {
     remoteStream: state.remoteStream,
     connectionState: state.connectionState,
     retryCount: state.retryCount,
     timeRemainingMs: state.timeRemainingMs,
     disconnect,
+    getPeerConnection,
   }
 }
