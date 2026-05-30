@@ -3,11 +3,13 @@ import { Sun, Moon, Monitor, ExternalLink } from 'lucide-react'
 import { PageContainer } from '@/components/layout/page-container'
 import { Card } from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
+import { RangeSlider } from '@/components/ui/range-slider'
 import { SegmentedControl, type SegmentedOption } from '@/components/ui/segmented-control'
 import { useTheme } from '@/hooks/use-theme'
 import { usePreferences } from '@/hooks/use-preferences'
 import { formatDuration } from '@/lib/format'
 import { pageVariants } from '@/lib/animations'
+import { TIMEOUT_MIN_MS, TIMEOUT_MAX_MS, TIMEOUT_STEP_MS } from '@/lib/timeout'
 import type { Theme } from '@/types'
 
 const THEME_OPTIONS: SegmentedOption<Theme>[] = [
@@ -16,14 +18,9 @@ const THEME_OPTIONS: SegmentedOption<Theme>[] = [
   { value: 'system', label: 'System', Icon: Monitor },
 ]
 
-const MIN_MS = 300_000
-const MAX_MS = 7_200_000
-const STEP_MS = 300_000
-
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme()
   const { defaultTimeoutMs, setDefaultTimeoutMs, mirrorVideo, setMirrorVideo } = usePreferences()
-  const pct = ((defaultTimeoutMs - MIN_MS) / (MAX_MS - MIN_MS)) * 100
 
   return (
     <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" className="flex-1 bg-warm-gradient">
@@ -40,28 +37,15 @@ export default function SettingsPage() {
             <h2 className="text-sm font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Defaults</h2>
 
             <div>
-              <div className="mb-2 flex items-center justify-between">
-                <label htmlFor="default-timeout" className="text-sm font-medium text-[var(--foreground)]">
-                  Default auto-reconnect window
-                </label>
-                <span className="font-display text-sm font-semibold text-[var(--primary)]" aria-live="polite">
-                  {formatDuration(defaultTimeoutMs)}
-                </span>
-              </div>
-              <input
+              <RangeSlider
                 id="default-timeout"
-                type="range"
-                min={MIN_MS}
-                max={MAX_MS}
-                step={STEP_MS}
+                label="Default auto-reconnect window"
                 value={defaultTimeoutMs}
-                onChange={(e) => setDefaultTimeoutMs(Number(e.target.value))}
-                aria-valuetext={formatDuration(defaultTimeoutMs)}
-                style={{ background: `linear-gradient(to right, var(--primary) ${pct}%, var(--secondary) ${pct}%)` }}
-                className="w-full h-2.5 appearance-none rounded-full cursor-pointer
-                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:size-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-[3px] [&::-webkit-slider-thumb]:border-[var(--primary)] [&::-webkit-slider-thumb]:shadow-warm [&::-webkit-slider-thumb]:cursor-pointer
-                  [&::-moz-range-thumb]:size-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-[3px] [&::-moz-range-thumb]:border-[var(--primary)] [&::-moz-range-thumb]:cursor-pointer
-                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+                onChange={setDefaultTimeoutMs}
+                min={TIMEOUT_MIN_MS}
+                max={TIMEOUT_MAX_MS}
+                step={TIMEOUT_STEP_MS}
+                formatValue={formatDuration}
               />
               <p className="mt-1.5 text-xs text-[var(--muted-foreground)]">Used when you start a new room.</p>
             </div>
